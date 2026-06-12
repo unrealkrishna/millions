@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MK Complete Radial Web — All Roles</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#07091a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{background:rgba(8,12,28,.98);border-bottom:1px solid #141e36;padding:9px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:20}
+.ht{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.4px}.ht em{color:#f59e0b;font-style:normal}
+.hm{font-size:10.5px;color:#3d4f70;margin-top:2px}
+.hright{text-align:right}.brands{display:flex;gap:7px;justify-content:flex-end;margin-bottom:3px}
+.chip{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:9px}
+.hh{font-size:10px;color:#2d3d5a}
+svg#web{flex:1;display:block;cursor:grab}svg#web:active{cursor:grabbing}
+
+/* Tooltip */
+#tt{position:fixed;background:rgba(8,12,30,.97);border:1px solid #1e2d4a;border-radius:9px;padding:10px 14px;pointer-events:none;z-index:300;max-width:260px;box-shadow:0 12px 36px rgba(0,0,0,.8);display:none}
+#tt.on{display:block}
+#tt h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3}
+.tt-dept{font-size:9px;font-weight:800;padding:2px 8px;border-radius:7px;display:inline-block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.tt-tier{font-size:9px;color:#64748b;display:block}
+
+/* Detail Panel */
+#panel{position:fixed;top:60px;right:14px;width:268px;background:rgba(6,9,26,.97);border:1px solid #162040;border-radius:10px;padding:14px;display:none;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,.8);backdrop-filter:blur(16px);max-height:calc(100vh - 80px);overflow-y:auto}
+#panel.on{display:block}
+#panel h3{font-size:13px;font-weight:700;color:#fff;padding-right:20px;margin-bottom:2px;line-height:1.4}
+.p-sub{font-size:10px;color:#64748b;margin-bottom:8px}
+.p-badge{font-size:8.5px;font-weight:800;padding:2px 8px;border-radius:7px;display:inline-block;margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
+.p-sec{margin-bottom:9px}
+.p-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.7px;color:#334466;font-weight:800;margin-bottom:3px}
+.p-item{font-size:10px;color:#7a90b0;padding:3px 0;border-bottom:1px solid #0f1828;line-height:1.4}
+.p-item:last-child{border-bottom:none}
+.px{position:absolute;top:9px;right:9px;background:none;border:none;color:#334466;cursor:pointer;font-size:14px;padding:3px 5px;border-radius:4px}
+.px:hover{background:#162040;color:#fff}
+
+/* Legends */
+#dleg{position:fixed;bottom:10px;left:10px;background:rgba(6,9,26,.92);border:1px solid #141e36;border-radius:8px;padding:9px 13px;z-index:100;backdrop-filter:blur(8px)}
+#lleg{position:fixed;bottom:10px;right:10px;background:rgba(6,9,26,.92);border:1px solid #141e36;border-radius:8px;padding:9px 13px;z-index:100;backdrop-filter:blur(8px)}
+.lt{font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:#334466;font-weight:800;margin-bottom:6px}
+.li{display:flex;align-items:center;gap:7px;font-size:9.5px;color:#3d5070;margin-bottom:3px}
+.li:last-child{margin-bottom:0}
+.ldot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px 14px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="ht">MK <em>Radial Company Web</em></div>
+    <div class="hm">84 Roles · 8 Clusters · 3 Hierarchy Rings · 140+ Collaboration Links — All Names Visible</div>
+  </div>
+  <div class="hright">
+    <div class="brands">
+      <span class="chip" style="background:#FF6B3520;color:#FF6B35">Million Cases</span>
+      <span class="chip" style="background:#EC489920;color:#EC4899">Peeperly</span>
+      <span class="chip" style="background:#06B6D420;color:#06B6D4">LEKE</span>
+    </div>
+    <div class="hh">Hover = trace links · Click = full role detail · Scroll = zoom · Drag = pan</div>
+  </div>
+</header>
+<svg id="web"></svg>
+
+<div id="tt"><h4 id="tt-n"></h4><span class="tt-dept" id="tt-d"></span><span class="tt-tier" id="tt-t"></span></div>
+
+<div id="panel">
+  <button class="px" onclick="closePanel()">✕</button>
+  <h3 id="p-n"></h3><div class="p-sub" id="p-s"></div>
+  <span class="p-badge" id="p-b"></span>
+  <div class="p-sec"><div class="p-lbl">Reports To</div><div class="p-item" id="p-r"></div></div>
+  <div class="p-sec"><div class="p-lbl">Key Responsibilities</div><div id="p-re"></div></div>
+  <div class="p-sec"><div class="p-lbl">Works With</div><div id="p-w"></div></div>
+</div>
+
+<div id="dleg"><div class="lt">Clusters</div><div class="lgrid" id="dl"></div></div>
+<div id="lleg">
+  <div class="lt">Links</div>
+  <div class="li"><svg width="22" height="9"><line x1="0" y1="4.5" x2="22" y2="4.5" stroke="#1e3050" stroke-width="1.2" stroke-dasharray="4,3"/></svg><span>Reports To</span></div>
+  <div class="li"><svg width="22" height="9"><line x1="0" y1="4.5" x2="22" y2="4.5" stroke="#60a5fa" stroke-width="2"/></svg><span>Cross-dept collab</span></div>
+  <div style="margin-top:7px;padding-top:7px;border-top:1px solid #141e36">
+    <div class="lt">Rings</div>
+    <div class="li"><svg width="22" height="14"><circle cx="11" cy="7" r="6.5" fill="none" stroke="#60a5fa" stroke-width="1.5"/></svg><span>Dept Head / Mgr.</span></div>
+    <div class="li"><svg width="22" height="11"><circle cx="11" cy="5.5" r="4.5" fill="none" stroke="#60a5fa" stroke-width="1.2"/></svg><span>Senior Specialist</span></div>
+    <div class="li"><svg width="22" height="9"><circle cx="11" cy="4.5" r="3" fill="none" stroke="#60a5fa" stroke-width="1"/></svg><span>Executive / Junior</span></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const D2R = a => a * Math.PI / 180;
+
+// ═══════════════════════════════════════════════════
+// SECTOR DEFINITIONS  — nodes assigned by tier
+// ═══════════════════════════════════════════════════
+const SMETA = {
+  strategy:   {label:'Strategy & Analytics',    color:'#F59E0B'},
+  product:    {label:'Product & Supply Chain',   color:'#A855F7'},
+  creative:   {label:'Creative & Content',       color:'#EC4899'},
+  marketing:  {label:'Marketing & Growth',       color:'#3B82F6'},
+  customer:   {label:'Customer',                 color:'#22C55E'},
+  operations: {label:'Operations & Logistics',   color:'#F97316'},
+  bizdev:     {label:'Business Development',     color:'#06B6D4'},
+  infra:      {label:'Infrastructure & Support', color:'#64748B'},
+  leadership: {label:'Leadership',               color:'#FF6B35'},
+};
+
+// Node lists per sector per tier (t1=heads, t2=seniors, t3=juniors)
+const SECTORS = {
+  strategy:   {t1:['sa_head'],                                               t2:['sa_bi','sa_mktg'],                                                                t3:['sa_junior']},
+  product:    {t1:['prtv_head','proc_head','plm_head','design_head'],         t2:['pack_head','prtv_senior','proc_senior','plm_senior','design_mid'],                t3:['prtv_exec','proc_exec','plm_exec','design_junior','pack_exec']},
+  creative:   {t1:['creative_head','pcs_head','content_head','mkt_head'],     t2:['creative_photo','creative_gd_sr','creative_video','pcs_analyst','content_seo','mkt_amazon'], t3:['creative_gd','creative_jr','content_writer','content_web','mkt_exec']},
+  marketing:  {t1:['paid_head','brand_head','growth_head'],                   t2:['paid_senior','paid_google','paid_email','paid_wa','brand_social','brand_creator','growth_cro','growth_aff'], t3:['brand_pr','brand_ugc']},
+  customer:   {t1:['sup_head','cx_head'],                                     t2:['sup_senior','cx_email','cx_wa'],                                                 t3:['sup_exec','sup_qa','cx_loyalty']},
+  operations: {t1:['ops_head','wh_head','log_head'],                          t2:['ops_ndr','wh_supervisor','inv_head','log_courier'],                               t3:['ops_process','ops_cod','wh_pickpack','wh_inward','inv_audit','log_billing']},
+  bizdev:     {t1:['b2b_head'],                                               t2:['b2b_ka'],                                                                         t3:['b2b_sales']},
+  infra:      {t1:['tech_head','fin_head','hr_head','legal_head'],            t2:['tech_shopify','tech_backend','fin_accounts','fin_mis','hr_exec'],                 t3:['tech_analytics','fin_tax','hr_admin','legal_exec']},
+};
+const SECTOR_ORDER = ['strategy','product','creative','marketing','customer','operations','bizdev','infra'];
+
+// ═══════════════════════════════════════════════════
+// ROLE DATA — all 84 roles
+// ═══════════════════════════════════════════════════
+const ROLES = {
+  founder:        {label:'Founder / CEO',                  full:'Founder & CEO',                          sector:'leadership', tier:0, up:null,         resp:['Sets vision & growth strategy across MC, Peeperly & LEKE','Capital allocation, org design & culture','Strategic partnerships, board & investor relations','Final approver on all major decisions'],                                                                                              with:['VP Strategy — weekly P&L pulse','CFO — financial health updates','HR Manager — org & culture','Legal Counsel — strategic guidance']},
+  // Strategy
+  sa_head:        {label:'VP Strategy',                    full:'VP Strategy / Chief Strategy Officer',   sector:'strategy',   tier:1, up:'founder',     resp:['Unit economics: CAC, LTV, CM1/CM2/CM3 by brand','Cohort-level reporting: repeat rate, LTV curve, RTO%','Attribution modeling beyond last-click','Cash flow & inventory forecasting 60–90 days ahead'],                                                                                       with:['Founder — weekly P&L review','Head of Perf. Mktg. — RoAS validation','CFO — budget alignment','All depts — single source of truth']},
+  sa_bi:          {label:'BI Analyst',                     full:'Business Intelligence Analyst',          sector:'strategy',   tier:2, up:'sa_head',     resp:['Builds Looker/Data Studio dashboards across all channels','Cohort analysis and retention curves','Attribution queries across Meta, Google, organic, WhatsApp'],                                                                                                                            with:['Sr. Performance Marketer — campaign data','Inventory Manager — velocity data','Creative Strategist — CVR signals','Growth Head — RPV & funnel analytics']},
+  sa_mktg:        {label:'Data Analyst',                   full:'Marketing Data Analyst',                 sector:'strategy',   tier:2, up:'sa_head',     resp:['Tracks and reports all paid channel KPIs daily','Compiles weekly brand performance snapshots','Monitors courier performance benchmarks'],                                                                                                                                                   with:['Head of Perf. Mktg. — daily KPI reporting','Logistics Manager — courier benchmarks','Growth CRO Spec. — funnel data']},
+  sa_junior:      {label:'Jr. Analyst',                    full:'Junior Analyst',                         sector:'strategy',   tier:3, up:'sa_bi',       resp:['Data entry & dashboard maintenance','Ad-hoc data pulls and report formatting','Assists BI Analyst with cohort modelling'],                                                                                                                                                                 with:['BI Analyst — daily support','Marketing Data Analyst — data compilation']},
+  // Product – PRTV
+  prtv_head:      {label:'PRTV Manager',                   full:'Product Research, Testing & Validation Manager', sector:'product', tier:1, up:'founder', resp:['Monitors platforms weekly for new product trends','Tracks competitor stores for assortment signals','Scores every tested product on demand, margin, RTO risk','Forwards validated winners to Procurement with full specs'],                                                                  with:['Procurement Manager — validated specs handoff','Creative Director — samples for content','CX Manager — VOC for product gaps','Art Director — trend direction for design']},
+  prtv_senior:    {label:'Sr. Researcher',                 full:'Senior Product Researcher',              sector:'product',    tier:2, up:'prtv_head',   resp:['Runs weekly trend scans across 5+ platforms','Procures samples and ships to test customers','Collects and structures post-sample feedback'],                                                                                                                                               with:['PRTV Manager — findings & direction','Product Testing Executive — test execution','Creator Manager — influencer trend signals']},
+  prtv_exec:      {label:'Test Executive',                 full:'Product Testing Executive',              sector:'product',    tier:3, up:'prtv_senior', resp:['Coordinates sample procurement logistics','Manages test customer communication & structured feedback','Maintains product scoring database'],                                                                                                                                                with:['Sr. Researcher — test coordination','Procurement Executive — sample sourcing']},
+  // Product – Procurement
+  proc_head:      {label:'Procurement Mgr.',               full:'Procurement Manager',                    sector:'product',    tier:1, up:'founder',     resp:['Identifies & vets vendors (min 3 quotes per product)','Negotiates pricing, payment terms & exclusivity','Maintains vendor scorecards: speed, quality, pricing'],                                                                                                                          with:['PRTV Manager — receives validated specs','WH Manager — inbound delivery timelines','CFO — vendor payments & credit terms','Packaging Manager — joint vendor discovery']},
+  proc_senior:    {label:'Sr. Proc. Exec.',                full:'Senior Procurement Executive',           sector:'product',    tier:2, up:'proc_head',   resp:['Manages active vendor relationships and PO tracking','Conducts sample inspection before bulk approval','Coordinates inbound shipment timelines with warehouse'],                                                                                                                         with:['Procurement Executive — PO execution','WH Inward Executive — inbound coordination','Finance Accounts Exec. — invoice processing']},
+  proc_exec:      {label:'Proc. Executive',                full:'Procurement Executive',                  sector:'product',    tier:3, up:'proc_senior', resp:['Raises POs after approval and tracks in register','Verifies GST invoices, HSN codes, e-way bills','Coordinates sample deliveries to PRTV'],                                                                                                                                             with:['WH Inward Executive — inbound receiving','PRTV Test Executive — sample delivery','Finance Accounts — invoice filing']},
+  // Product – PLM
+  plm_head:       {label:'Brand Head / PLM',               full:'Brand Head / Product Manager (PLM)',     sector:'product',    tier:1, up:'founder',     resp:['Owns 6–12 month product roadmap by brand','Monitors SKU performance weekly (velocity, RTO%, CM1)','Manages product sunset process — stop reorder, deplete, retire','Briefs Creative & Content on every new launch story'],                                                             with:['PRTV Manager — validated new concepts','Creative Director — product narrative for content','VP Strategy — SKU-level performance data','Head of Perf. Mktg. — fast-moving SKU alerts']},
+  plm_senior:     {label:'Sr. PLM Executive',              full:'Senior Product Executive (PLM)',         sector:'product',    tier:2, up:'plm_head',    resp:['Tracks SKU velocity, RTO%, CM1 weekly','Flags dead stock to Marketing for clearance','Ensures naming, photography, listing quality consistency'],                                                                                                                                        with:['Brand Head / PLM — daily SKU reporting','SEO Specialist — product page SEO','Sr. Procurement Exec. — sourcing status']},
+  plm_exec:       {label:'PLM Executive',                  full:'Product Executive (PLM)',                sector:'product',    tier:3, up:'plm_senior',  resp:['Maintains product launch tracker and roadmap calendar','Coordinates launch readiness across Creative, Content, and Ops','Manages product data in Shopify (variants, descriptions, tags)'],                                                                                              with:['Sr. PLM Executive — daily task queue','Content Writer — product copy briefs','Web Executive — Shopify listing upload']},
+  // Product – Product Design
+  design_head:    {label:'Art Director',                   full:'Art Director / Senior Designer',         sector:'product',    tier:1, up:'founder',     resp:['Creates original surface patterns and illustrations for MC & Peeperly','Maintains separate design DNA per brand: MC (bold, broad) vs Peeperly (curated, aesthetic)','Builds design library of adaptable patterns for new phone models','Produces print-ready CMYK files for every SKU'],  with:['PRTV Manager — customer feedback & trend → design direction','Brand Head/PLM — launch calendar & model roadmap','Creative Director — mockups & files for PDPs and ads','Procurement Manager — print specs, production files']},
+  design_mid:     {label:'Pattern Designer',               full:'Mid-Level Pattern Designer',             sector:'product',    tier:2, up:'design_head', resp:['Executes surface pattern designs from Art Director briefs','Adapts existing designs to new phone model dimensions','Tracks design sell-through signals'],                                                                                                                                with:['Art Director — daily brief execution','Junior Designer — file prep & version control','Sr. Graphic Designer — mockup coordination']},
+  design_junior:  {label:'Jr. Designer (Prod.)',           full:'Junior Product Designer',                sector:'product',    tier:3, up:'design_mid',  resp:['Maintains version control on all design files','Prepares files: correct dimensions, CMYK, bleed marks','Creates simple product mockups for internal review'],                                                                                                                         with:['Pattern Designer — file prep assistance','Graphic Designer — file format alignment']},
+  // Product – Packaging
+  pack_head:      {label:'Packaging Manager',              full:'Packaging Manager',                      sector:'product',    tier:2, up:'founder',     resp:['Sources & manages vendors for boxes, tissue, stickers, thank-you cards','Ensures warehouse has 30-day buffer stock of packaging materials','Manages seasonal packaging for Diwali, Valentine\'s, Women\'s Day'],                                                                        with:['Creative Director — receives all packaging artwork','WH Manager — materials stocked at right quantities','Procurement Manager — joint vendor management','CX Manager — unboxing experience feedback']},
+  pack_exec:      {label:'Packaging Executive',            full:'Packaging Executive',                    sector:'product',    tier:3, up:'pack_head',   resp:['Tracks packaging inventory and raises reorder alerts','Coordinates sample approval from vendors before bulk orders','Manages seasonal packaging inventory calendars'],                                                                                                                   with:['Packaging Manager — daily operations','WH Inward Executive — material receipt & stocking']},
+  // Creative – Creative Team
+  creative_head:  {label:'Creative Director',              full:'Creative Director',                      sector:'creative',   tier:1, up:'founder',     resp:['Sets creative direction — hooks, formats, messaging angles per product & audience','Executes photoshoots (studio + lifestyle) for all new launches','Maintains Digital Asset Management (DAM) system','Produces packaging design, store banners, email headers, WA visuals'],           with:['Head of Perf. Mktg. — ad creatives supply','Brand Manager — organic, creator & PR assets','Content Manager — all PDP photography, video & design assets','Packaging Manager — artwork handoff','Creative Strategist — brief execution & review']},
+  creative_photo: {label:'Photographer',                   full:'Studio Photographer',                    sector:'creative',   tier:2, up:'creative_head', resp:['Executes all studio and lifestyle photoshoots','Produces raw files and maintains photo archive','Coordinates product delivery from Warehouse for shoot days'],                                                                                                                     with:['Creative Director — shoot brief & direction','Sr. Graphic Designer — photo editing handoff','PLM Executive — product availability for shoots']},
+  creative_gd_sr: {label:'Sr. Graphic Designer',           full:'Senior Graphic Designer',                sector:'creative',   tier:2, up:'creative_head', resp:['Creates ad creatives in all required formats (1:1, 4:5, 9:16, static + video)','Designs PDP images for Shopify and marketplace listings','Produces email headers and WhatsApp message visual templates'],                                                                        with:['Email & CRM Specialist — email template design','Social Media Manager — social post assets','Video Editor — creative direction alignment','Graphic Designer — workload & QC']},
+  creative_video: {label:'Video Editor',                   full:'Video Editor / Producer',                sector:'creative',   tier:2, up:'creative_head', resp:['Produces short-form video for Meta ads (Reels format, 15–30 sec)','Edits UGC and influencer raw footage into polished ad assets','Manages video asset library and versioning by format'],                                                                                       with:['Sr. Performance Marketer — video ad formats & Meta specs','Creator Manager — influencer footage editing','Social Media Manager — organic video content']},
+  creative_gd:    {label:'Graphic Designer',               full:'Graphic Designer',                       sector:'creative',   tier:3, up:'creative_gd_sr', resp:['Executes graphic design assets under Sr. Designer direction','Resizes and adapts creatives across different ad formats','Maintains organized file naming in DAM system'],                                                                                                      with:['Sr. Graphic Designer — daily task direction & QC','Jr. Product Designer — file formatting alignment']},
+  creative_jr:    {label:'Jr. Creative',                   full:'Junior Creative / Intern',               sector:'creative',   tier:3, up:'creative_gd_sr', resp:['Supports Sr. Designer with resizing and format adaptation','Assists with DAM file organization and tagging','Learns brand guidelines and creative standards'],                                                                                                                 with:['Sr. Graphic Designer — mentorship & task queue']},
+  // Creative – Performance Creative Strategy
+  pcs_head:       {label:'Creative Strategist',            full:'Creative Strategist / PCS Lead',         sector:'creative',   tier:1, up:'founder',     resp:['Owns weekly creative strategy session — analyze wins, failures, why','Writes all creative briefs: avatar → awareness → angle → hook → script → format → platform','Builds & maintains the Angles Bank per brand','Audits competitor creatives monthly: Casetify, DailyObjects, BURGA'],    with:['Creative Director — briefs handoff; output review','Head of Perf. Mktg. — new concepts from campaign data','BI Analyst — cohort & CVR data for briefs','Brand Manager — brand voice & avatar definitions','CX Manager — VOC for creative angles']},
+  pcs_analyst:    {label:'Creative Analyst',               full:'Creative Analyst (PCS)',                  sector:'creative',   tier:2, up:'pcs_head',    resp:['Mines Amazon reviews, Reddit, competitor ad libraries weekly for angles','Tracks hook performance (CTR in 48h) across launched creatives','Compiles competitive intelligence report monthly'],                                                                                          with:['Creative Strategist — daily insight inputs','Sr. Graphic Designer — static ad brief specs','Sr. Performance Marketer — creative fatigue signals']},
+  // Creative – Content & Website
+  content_head:   {label:'Content Manager',                full:'Content & Website Manager',              sector:'creative',   tier:1, up:'founder',     resp:['Creates & optimizes all PDPs — title, description, images, video, specs','Maintains store front — banners, collections, homepage','Executes SEO strategy — keyword research, meta tags, blog content','Builds campaign landing pages & sale infrastructure'],                           with:['Creative Director — all PDP photography, video & design assets','Head of Perf. Mktg. — campaign landing pages','Tech Lead — new features & bug fixes','CX Manager — store FAQs reduce support tickets','Growth Manager — A/B test implementation']},
+  content_seo:    {label:'SEO Specialist',                 full:'SEO Specialist',                         sector:'creative',   tier:2, up:'content_head', resp:['Owns keyword strategy, on-page optimization & technical SEO','Backlink outreach and competitor gap analysis','Optimizes product, category & blog pages for organic ranking'],                                                                                                      with:['Content Writer — SEO-optimized content briefs','Sr. PLM Executive — product page SEO requirements','Google Marketer — keyword overlap strategy','BI Analyst — organic traffic forecasting']},
+  content_writer: {label:'Content Writer',                 full:'Content Writer',                         sector:'creative',   tier:3, up:'content_seo', resp:['Writes blog posts, buying guides & SEO-optimized landing copy','Creates product description copy at scale across all SKUs','Produces email newsletter blog digest content'],                                                                                                           with:['SEO Specialist — keyword briefs & topic direction','PLM Executive — product knowledge for descriptions','Email & CRM Specialist — email digest content','WhatsApp Retention Spec. — WA message copy']},
+  content_web:    {label:'Web Executive',                  full:'Shopify / Web Executive',                sector:'creative',   tier:3, up:'content_head', resp:['Manages Shopify store operations — product uploads, collection pages, app settings','Implements store changes from Content Manager and Growth team','Coordinates with Tech on custom development requests'],                                                                          with:['Shopify Developer — store feature implementation','Growth CRO Specialist — A/B test variant execution','PLM Executive — product listing uploads & maintenance']},
+  // Creative – Marketplace
+  mkt_head:       {label:'Marketplace Manager',            full:'Marketplace Manager',                    sector:'creative',   tier:1, up:'content_head', resp:['Owns all Amazon India listings — titles, bullets, descriptions, backend keywords, A+ content','Manages Flipkart & Meesho in sync with D2C store','Builds & manages Amazon Sponsored Products, Brands & DSP campaigns'],                                                             with:['Creative Director — marketplace-optimized images & A+ content','Inventory Manager — FBA shipment quantities','CFO — marketplace remittance reconciliation','Head of Perf. Mktg. — marketplace vs D2C budget alignment']},
+  mkt_amazon:     {label:'Sr. Amazon Exec.',               full:'Senior Amazon Executive',                sector:'creative',   tier:2, up:'mkt_head',    resp:['Manages Amazon campaign setup, budget pacing & bid optimization','Researches & refreshes keywords quarterly (especially for new phone models)','Ships FBA inventory on schedule — min 3 weeks before major launches'],                                                                   with:['Inventory Manager — FBA inventory levels & restocking','Sr. Graphic Designer — A+ content design files','Google Marketer — cross-marketplace vs search coordination']},
+  mkt_exec:       {label:'Marketplace Exec.',              full:'Marketplace Executive (Flipkart/Meesho)', sector:'creative',  tier:3, up:'mkt_head',    resp:['Manages Flipkart and Meesho listings synchronization','Monitors & responds to all marketplace reviews (1★ and 2★ within 24h)','Runs review generation campaigns via email/WhatsApp to marketplace buyers'],                                                                           with:['MIS Executive — marketplace settlement reconciliation','Email & CRM Specialist — review generation campaign coordination']},
+  // Marketing – Paid Performance
+  paid_head:      {label:'Perf. Mktg. Head',               full:'Head of Performance Marketing',          sector:'marketing',  tier:1, up:'founder',     resp:['Manages Meta CBO/ABO campaigns — test creatives weekly, scale winners','Runs Google Performance Max and Shopping campaigns','Owns media budget allocation: Meta, Google, TikTok, WhatsApp broadcast','Monitors creative fatigue — flags to Creative when CPR spikes'],               with:['Creative Director — creative briefs + performance data feedback','VP Strategy — cohort data, attribution, true RoAS','Brand Head/PLM — fast-moving SKU alerts & clearance campaigns','CX Manager — high-LTV segments for lookalike targeting','Procurement Manager — restocking urgency for top-selling SKUs']},
+  paid_senior:    {label:'Sr. Meta Marketer',              full:'Senior Performance Marketer (Meta)',      sector:'marketing',  tier:2, up:'paid_head',   resp:['Runs Meta CBO & ABO campaign structures and creative testing','Scales winning creatives and kills underperformers daily','Manages Meta pixel health, event deduplication & attribution windows'],                                                                                     with:['Creative Director — ad creative supply for Meta campaigns','Video Editor — video ad assets for Reels & Stories','Creator Manager — whitelisting creator content for paid','Analytics & Tracking Spec. — Meta Pixel health & CAPI setup']},
+  paid_google:    {label:'Google Marketer',                full:'Google / PMax Marketer',                 sector:'marketing',  tier:2, up:'paid_head',   resp:['Manages Google Performance Max, Shopping, Search & Display campaigns','Maintains Google Merchant Center and product feed health','Manages keyword bidding, negative keywords & match types'],                                                                                          with:['Web Executive — product feed sync & GMC data quality','SEO Specialist — keyword overlap strategy','Sr. Amazon Executive — cross-marketplace traffic coordination','Analytics & Tracking Spec. — GA4 event tracking & conversion setup']},
+  paid_email:     {label:'Email Specialist',               full:'Email Marketing Specialist',             sector:'marketing',  tier:2, up:'paid_head',   resp:['Builds & deploys email campaigns and automation flows (Klaviyo)','A/B tests subject lines, CTAs, send times & layouts','Monitors open rate, CTR, revenue per email & unsubscribe rate'],                                                                                          with:['Email & CRM Specialist (CX) — lifecycle email flow coordination','Sr. Graphic Designer — email template design & visual assets','Content Writer — email copy & subject lines']},
+  paid_wa:        {label:'WhatsApp Mktg. Mgr.',            full:'WhatsApp Marketing Manager',             sector:'marketing',  tier:2, up:'paid_head',   resp:['Manages WhatsApp Business API campaigns — abandoned cart, offers, launch alerts','Builds broadcast message sequences via WATI for new product announcements','Manages WhatsApp subscriber list growth (opt-in campaigns)'],                                                          with:['WhatsApp Retention Spec. (CX) — broadcast vs nurture strategy alignment','CRM Specialist — audience segmentation for WhatsApp targeting','Content Writer — WA message copy & templates']},
+  brand_head:     {label:'Brand Manager',                  full:'Brand Manager',                          sector:'marketing',  tier:1, up:'founder',     resp:['Manages Instagram & other social accounts — consistent posting calendar','Builds & grows email list with lead magnets and pop-ups','Manages brand collabs with complementary brands','Develops MK\'s ongoing brand narrative'],                                                         with:['Creative Director — assets for organic, creator & PR content','Head of Perf. Mktg. — paid + organic messaging; whitelist creator content','CX Manager — UGC, testimonials & referral content','VP Strategy — brand equity metrics & creator-attributed revenue']},
+  brand_social:   {label:'Social Media Mgr.',              full:'Social Media / Community Manager',       sector:'marketing',  tier:2, up:'brand_head',  resp:['Plans & executes organic content calendar across IG, TikTok, Pinterest, Facebook','Responds to every comment, DM & mention within 4 hours — with brand voice','Runs monthly community challenges or prompts'],                                                                        with:['Sr. Graphic Designer — social post assets & story templates','Video Editor — organic Reels and TikTok content','Creator Manager — collab posts & co-created content calendar']},
+  brand_creator:  {label:'Creator Manager',                full:'Influencer / Creator Manager',           sector:'marketing',  tier:2, up:'brand_head',  resp:['Builds & maintains tiered creator roster: nano → macro → YouTube reviewers','Identifies & vets new creators per launch cycle','Coordinates product dispatch to creators before launch day'],                                                                                        with:['Sr. Performance Marketer — UGC whitelisting for paid amplification','Video Editor — creator raw footage editing & format guidelines','In-house UGC Creator — brief direction & content review']},
+  brand_pr:       {label:'PR Executive',                   full:'PR Executive',                           sector:'marketing',  tier:3, up:'brand_head',  resp:['Builds & maintains media contact list (tech, lifestyle, startup, regional media)','Pitches & places earned media stories around major launches','Writes & distributes press releases — targets 1 placement per major launch'],                                                      with:['Creative Director — press kits, PR assets & media materials','Brand Manager — PR story narrative & brand voice alignment','Social Media Manager — PR stories amplification on owned channels']},
+  brand_ugc:      {label:'UGC Creator',                    full:'In-house UGC Creator',                   sector:'marketing',  tier:3, up:'brand_creator', resp:['Creates authentic UGC-style content for organic and paid testing','Produces unboxing, lifestyle & review-style video content','Tests hooks and formats in-house before briefing external creators'],                                                                                with:['Creator Manager — brief direction & content review','Sr. Performance Marketer — hook testing data for paid pipeline']},
+  growth_head:    {label:'Head of Growth',                 full:'Head of Growth / Growth Manager',        sector:'marketing',  tier:1, up:'founder',     resp:['Owns full conversion funnel — Homepage → Collection → PDP → Cart → Checkout → Thank You','Runs checkout optimization tests: field reduction, COD-to-prepaid nudge copy','Owns affiliate marketing channel — identify, onboard & manage affiliate partners'],                     with:['Head of Perf. Mktg. — post-click experience & landing page CVR','Tech Lead — CRO tooling: heatmaps, session recording, A/B testing','Content Manager — A/B test variant implementation','VP Strategy — funnel data, attribution, RPV tracking']},
+  growth_cro:     {label:'CRO Specialist',                 full:'CRO Specialist',                         sector:'marketing',  tier:2, up:'growth_head', resp:['Runs structured A/B tests on PDPs, checkout & landing pages','Builds & maintains testing backlog prioritized by potential impact','Monitors funnel drop-off using GA4 and Shopify analytics weekly'],                                                                                with:['Web Executive — A/B test variant implementation on store','Analytics & Tracking Spec. — analytics event setup for CRO experiments','Marketing Data Analyst — RPV and funnel drop-off data']},
+  growth_aff:     {label:'Affiliate Manager',              full:'Affiliate Manager',                      sector:'marketing',  tier:2, up:'growth_head', resp:['Identifies, onboards & manages affiliate partners (deal sites, cashback, niche creators)','Builds affiliate commission structure and tracking infrastructure','Monitors affiliate traffic quality and fraud prevention'],                                                             with:['B2B Manager — affiliate ↔ wholesale reseller overlap','CRM Specialist — affiliate promo code tracking in CRM','Finance Accounts Exec. — affiliate payout reconciliation']},
+  // Customer – Support
+  sup_head:       {label:'Support Lead',                   full:'Support Lead / Manager',                 sector:'customer',   tier:1, up:'founder',     resp:['Handles all inbound queries: WhatsApp, email, IG DMs/comments, phone','Maintains NPS tracking — collect, calculate, report monthly','Weekly report of top contact reasons to Ops, Product & Founder'],                                                                               with:['Operations Manager — order status & delivery resolution','WH Manager — return & exchange coordination','CX Manager — VIP escalations & VOC pattern insights','Brand Head/PLM — recurring product complaint routing']},
+  sup_senior:     {label:'Sr. Support Exec.',              full:'Senior Support Executive',               sector:'customer',   tier:2, up:'sup_head',    resp:['Handles complex escalations, refunds & exchange cases','Coaches junior support executives on query resolution SOPs','Conducts daily QA review of ticket resolution quality'],                                                                                                       with:['Support Executive — daily queue management & coaching','QA/Training Executive — quality standard alignment','Operations NDR Executive — complex delivery case resolution']},
+  sup_exec:       {label:'Support Executive',              full:'Support Executive',                      sector:'customer',   tier:3, up:'sup_senior',  resp:['Resolves order status, delivery, refund, exchange & product queries','Logs & categorizes every ticket by reason type','Handles COD-to-prepaid conversion calls for high-value hesitant customers'],                                                                                  with:['WH Supervisor — returns, exchanges & item replacement coordination','Sr. Support Executive — daily queue & escalation handoffs']},
+  sup_qa:         {label:'QA / Training Exec.',            full:'QA / Training Executive',                sector:'customer',   tier:3, up:'sup_head',    resp:['Monitors support response quality and brand voice adherence','Trains new support hires on product knowledge, SOP & tools','Builds & updates the support knowledge base and FAQ library'],                                                                                          with:['Support Lead — quality standards & training curriculum','Sr. Support Executive — quality audit feedback']},
+  // Customer – CX & Retention
+  cx_head:        {label:'CX & Retention Mgr.',            full:'CX & Retention Manager',                 sector:'customer',   tier:1, up:'founder',     resp:['Designs & executes post-purchase journey — confirmation, dispatch, delivery, follow-up','Builds loyalty/rewards program and VIP tier benefits','Segments customer base by LTV tier and runs personalized campaigns for top 20%'],                                                   with:['Head of Perf. Mktg. — high-LTV segments for lookalike targeting','Brand Manager — UGC, testimonials & referral content pipeline','Support Lead — VIP escalations & VOC pattern insights','VP Strategy — cohort LTV & retention curves']},
+  cx_email:       {label:'Email & CRM Spec.',              full:'Email & CRM Specialist (CX)',            sector:'customer',   tier:2, up:'cx_head',     resp:['Manages lifecycle email flows: welcome, post-purchase, win-back, birthday (Klaviyo)','Maintains CRM segmentation — tags, customer properties, purchase history','Coordinates review request automations & UGC incentive sequences'],                                               with:['Email Marketing Specialist (Paid) — lifecycle vs broadcast coordination','Sr. Graphic Designer — email template design & visual assets','Content Writer — email copy & blog digest content']},
+  cx_wa:          {label:'WhatsApp Retention',             full:'WhatsApp Retention Specialist (CX)',     sector:'customer',   tier:2, up:'cx_head',     resp:['Manages WATI WhatsApp flows: order updates → review ask → repeat offer','Builds re-engagement and win-back sequences via WhatsApp','Grows WhatsApp opt-in list through post-purchase touchpoints'],                                                                                with:['WhatsApp Marketing Manager (Paid) — broadcast vs nurture WA strategy alignment','Email & CRM Specialist — cross-channel retention flow coordination','Content Writer — WA message copy & template writing']},
+  cx_loyalty:     {label:'Loyalty Executive',              full:'Loyalty Program Executive',              sector:'customer',   tier:3, up:'cx_head',     resp:['Manages loyalty rewards program — points, tiers, redemptions','Runs monthly VIP giveaways & early access campaigns for top customers','Tracks referral program performance and word-of-mouth attribution'],                                                                        with:['Social Media Manager — loyalty member community recognition & UGC','CX Manager — loyalty program strategy & tier design']},
+  // Operations – Ops/NDR
+  ops_head:       {label:'Operations Manager',             full:'Operations Manager',                     sector:'operations', tier:1, up:'founder',     resp:['Confirms all COD orders via IVR/calling within SLA','Manages NDR workflow — call undelivered customers, reschedule delivery','Tracks daily order pipeline: confirmed → dispatched → in-transit → delivered/RTO'],                                                                    with:['WH Manager — confirmed order batch handoff for packing','Logistics Manager — NDR resolution & courier coordination','Support Lead — order status updates for customer queries','Finance Accounts Exec. — delivery & RTO data for reconciliation']},
+  ops_ndr:        {label:'NDR Executive',                  full:'NDR Executive',                          sector:'operations', tier:2, up:'ops_head',    resp:['Manages all failed delivery cases — calls customers, reschedules with courier','Coordinates with courier partners on NDR action plans','Tracks NDR resolution rate and RTO conversion daily'],                                                                                     with:['Courier Relations Executive — failed delivery escalations & re-attempt coordination','Operations Manager — daily NDR queue & resolution reporting']},
+  ops_process:    {label:'Order Processing Exec.',         full:'Order Processing Executive',             sector:'operations', tier:3, up:'ops_head',    resp:['Processes orders — prints shipping labels, invoices, assigns courier','Manages abandoned cart recovery calling (with AI-assisted segmentation)','Flags high-RTO pincodes and products to Operations Manager'],                                                                       with:['WH Pick-Pack Executive — order batch handoff for packing','COD Confirmation Executive — confirmed order queue coordination']},
+  ops_cod:        {label:'COD Confirmation Exec.',         full:'COD Confirmation Executive',             sector:'operations', tier:3, up:'ops_head',    resp:['Confirms all COD orders via IVR or manual calling within defined SLA','Flags suspicious/fraud-risk orders to Operations Manager','Tracks COD confirmation rate and reasons for non-confirmation'],                                                                                with:['Order Processing Executive — confirmed order queue','WH Supervisor — priority confirmation alerts for dispatch schedule']},
+  // Operations – Warehouse
+  wh_head:        {label:'Warehouse Manager',              full:'Warehouse Manager',                      sector:'operations', tier:1, up:'founder',     resp:['Oversees pick-pack-ship for all daily orders','Manages returns/RTOs — inspect, categorize (resaleable/damaged), restock','Ensures packaging SOP is followed — right inserts, thank-you cards, brand packaging'],                                                                   with:['Operations Manager — receives confirmed order batches for packing','Inventory Manager — real-time physical vs system stock sync','Packaging Manager — packaging materials always in stock','Logistics Manager — courier pickup scheduling & shipment handover']},
+  wh_supervisor:  {label:'WH Supervisor',                  full:'Warehouse Supervisor',                   sector:'operations', tier:2, up:'wh_head',     resp:['Manages daily pick-pack queue and team allocation','Ensures packaging SOP compliance and QC on every order','Coordinates inward receiving with procurement team'],                                                                                                               with:['WH Pick-Pack Executive — daily queue management & QC','WH Inward Executive — inbound stock receiving coordination','COD Confirmation Executive — dispatch schedule priority alerts']},
+  wh_pickpack:    {label:'Pick-Pack Exec.',                full:'Pick-Pack Executive',                    sector:'operations', tier:3, up:'wh_supervisor', resp:['Executes pick-pack-ship for all daily orders against SOP','Maintains warehouse hygiene and organized SKU storage','Generates daily dispatch reports'],                                                                                                                        with:['WH Supervisor — daily queue assignment','Order Processing Executive — order batch receipt & execution']},
+  wh_inward:      {label:'Inward Exec.',                   full:'Inward / Receiving Executive',           sector:'operations', tier:3, up:'wh_supervisor', resp:['Receives inbound stock from procurement — count, quality check, shelve','Manages RTO returns processing — inspect, categorize, restock in system','Maintains inward register and GRN for all received stock'],                                                                 with:['Sr. Procurement Executive — inbound delivery coordination','Inventory Manager — real-time stock update on inward','Packaging Executive — packaging material receipt & stocking']},
+  inv_head:       {label:'Inventory Manager',              full:'Inventory Manager',                      sector:'operations', tier:2, up:'wh_head',     resp:['Maintains live inventory dashboard (Shopify + warehouse sync)','Calculates & updates reorder points by SKU using velocity data','Raises reorder alerts to Procurement 14 days before stockout'],                                                                                  with:['Procurement Manager — reorder triggers with quantity recommendations','WH Manager — physical vs system inventory sync','Head of Perf. Mktg. — slow-moving SKU alerts for clearance campaigns','Sr. Amazon Executive — FBA inventory levels & restocking coordination']},
+  inv_audit:      {label:'Stock Audit Exec.',              full:'Stock Audit Executive',                  sector:'operations', tier:3, up:'inv_head',    resp:['Reconciles physical stock vs system count weekly','Tracks RTO returns and adds back to available inventory after inspection','Generates weekly Top 20 Velocity Report and Dead Stock Report'],                                                                                    with:['Inventory Manager — weekly reconciliation reporting','WH Inward Executive — RTO return categorization data']},
+  // Operations – Logistics
+  log_head:       {label:'Logistics Manager',              full:'Logistics Manager',                      sector:'operations', tier:1, up:'founder',     resp:['Manages relationships with all courier partners (Shiprocket, Delhivery, XpressBees, Blue Dart)','Negotiates rates — base rate, RTO charges, COD handling fees','Tracks courier performance: delivery%, RTO%, remittance speed'],                                               with:['Operations Manager — NDR resolution & dispatch coordination','WH Manager — courier pickup scheduling & shipment handover','CFO — remittance reconciliation & billing disputes','Marketing Data Analyst — courier performance benchmarking data']},
+  log_courier:    {label:'Courier Relations Exec.',        full:'Courier Relations Executive',            sector:'operations', tier:2, up:'log_head',    resp:['Manages day-to-day courier partner communication','Escalates NDR unresolved cases to courier account managers','Evaluates & onboards new courier partners for specific zones'],                                                                                                   with:['NDR Executive — failed delivery escalations & re-attempt coordination','Logistics Manager — daily courier performance alerts']},
+  log_billing:    {label:'Billing & Recon. Exec.',         full:'Billing / Reconciliation Executive',     sector:'operations', tier:3, up:'log_head',    resp:['Disputes incorrect courier billing — weight discrepancy, wrong RTO charges','Ensures correct remittance reconciliation with Finance team','Tracks remittance cycle time by courier partner'],                                                                                   with:['Finance Accounts Executive — courier billing discrepancy resolution','MIS Executive — remittance data reconciliation support']},
+  // Business Development
+  b2b_head:       {label:'B2B Manager',                    full:'B2B Manager / Business Development Manager', sector:'bizdev', tier:1, up:'founder',    resp:['Owns LEKE reseller network — onboarding, pricing tiers, MOQ, credit terms','Identifies & pitches wholesale accounts: retail stores, gift shops, corporate gifting','Builds corporate gifting vertical — branded phone cases as employee/client gifts'],                           with:['Procurement Manager — bulk order MOQ & lead times','WH Manager — priority B2B fulfilment coordination','CFO — B2B invoicing, GST, credit terms & collections','Tech Lead — LEKE Mock-up Tool & reseller portal','Creative Director — B2B sales decks & catalogs']},
+  b2b_ka:         {label:'Key Account Exec.',              full:'Key Account Executive',                  sector:'bizdev',    tier:2, up:'b2b_head',    resp:['Manages relationships with existing top reseller accounts','Tracks B2B CRM: last order, account value, reorder pattern, growth potential','Runs B2B-specific campaigns: bulk incentives, seasonal buying windows'],                                                               with:['B2B Manager — account strategy direction','B2B Sales Executive — new account onboarding handoff','WH Supervisor — priority fulfilment alerts for key accounts']},
+  b2b_sales:      {label:'B2B Sales Exec.',                full:'B2B Sales Executive',                    sector:'bizdev',    tier:3, up:'b2b_head',    resp:['Outbound prospecting — retail stores, accessories distributors, corporate gifting companies','Manages LEKE Mock-up Tool access for new resellers — account creation, wallet setup','Coordinates with Finance on credit term approval for new B2B accounts'],                  with:['Key Account Executive — new account onboarding handoff','Finance Accounts Executive — credit term & payment setup']},
+  // Infrastructure – Tech
+  tech_head:      {label:'Tech Lead',                      full:'Tech Lead',                              sector:'infra',     tier:1, up:'founder',     resp:['Builds & maintains Shopify store tech — apps, integrations, custom features','Implements tracking infrastructure — GA4, Meta Pixel, server-side tracking','Integrates all tools: Shopify ↔ WATI ↔ GoKwik ↔ Razorpay ↔ Accounting software','Automates manual ops: order exports, inventory sync, report generation'],           with:['VP Strategy — data infrastructure & analytics dashboards','Head of Perf. Mktg. — pixel setup, tracking & attribution','Operations Manager — WMS integration & automation','Content Manager — store feature implementation','B2B Manager — LEKE Mock-up Tool & reseller portal']},
+  tech_shopify:   {label:'Shopify Developer',              full:'Shopify / Full-Stack Developer',         sector:'infra',     tier:2, up:'tech_head',   resp:['Builds & maintains Shopify store customizations, custom sections & apps','Implements A/B test variants from Growth team on store','Ensures store uptime — zero downtime during sale events and new launches'],                                                                      with:['Web Executive — feature implementation handoff','Growth CRO Specialist — A/B test variant deployment','Tech Lead — architecture & code review']},
+  tech_backend:   {label:'Backend Developer',              full:'Backend / Integration Developer',        sector:'infra',     tier:2, up:'tech_head',   resp:['Builds & maintains API integrations: WATI, GoKwik, logistics, ERP, accounting','Develops internal automation tools (inventory sync, order export, report generation)','Ensures data security, privacy compliance & IT Act adherence'],                                            with:['Operations Manager — WMS integration & order automation','Analytics & Tracking Spec. — data pipeline architecture','Tech Lead — technical spec review']},
+  tech_analytics: {label:'Analytics & Tracking Spec.',    full:'Analytics & Tracking Specialist',        sector:'infra',     tier:3, up:'tech_head',   resp:['Maintains GA4, Meta Pixel & server-side tracking event health','Sets up conversion tracking for all campaign types','Supports Marketing team with pixel health diagnosis and CAPI setup'],                                                                                       with:['Sr. Performance Marketer — Meta Pixel health & CAPI event quality','Google Marketer — GA4 conversion tracking & PMax feed setup','Growth CRO Specialist — analytics events for CRO experiment measurement']},
+  // Infrastructure – Finance
+  fin_head:       {label:'CFO / Finance Mgr.',             full:'Finance Manager / CFO',                  sector:'infra',     tier:1, up:'founder',     resp:['Remittance prediction & reconciliation — delivered orders vs money received','RTO reconciliation — courier-marked RTO vs warehouse-received','GST, TDS & advance tax filing (monthly/quarterly)','Monthly MIS report: Revenue, GM%, RTO%, ad spend, CM2, EBITDA'],                 with:['Operations/Logistics — remittance & RTO reconciliation data','Procurement Manager — vendor payments & invoice verification','VP Strategy — unit economics alignment & P&L','Founder — weekly financial health updates']},
+  fin_accounts:   {label:'Accounts Executive',             full:'Accounts Executive (AR/AP)',             sector:'infra',     tier:2, up:'fin_head',    resp:['Processes all vendor payments after invoice verification','Tracks accounts receivable — B2B payments, marketplace remittances','Manages courier billing dispute documentation and resolution'],                                                                                     with:['Billing / Recon. Executive — courier billing discrepancy data','Sr. Procurement Executive — invoice processing & payment scheduling','B2B Sales Executive — credit term & B2B payment setup']},
+  fin_mis:        {label:'MIS Executive',                  full:'MIS Executive',                          sector:'infra',     tier:2, up:'fin_head',    resp:['Builds & maintains the master P&L dashboard by brand','Compiles daily/weekly/monthly MIS reports for Founder and leadership','Reconciles marketplace remittances: Amazon, Flipkart, Meesho settlements'],                                                                           with:['Marketplace Manager — marketplace settlement reconciliation','Billing / Recon. Executive — logistics remittance data','VP Strategy — aligned P&L reporting format']},
+  fin_tax:        {label:'GST / Tax Executive',            full:'GST / Tax Executive',                    sector:'infra',     tier:3, up:'fin_head',    resp:['Calculates & files monthly GST returns','Manages TDS deduction, deposit & returns (quarterly)','Verifies GST numbers, HSN codes & e-way bills on all invoices'],                                                                                                                   with:['Compliance Executive (Legal) — regulatory compliance coordination','Finance Manager — tax advisory & advance tax planning']},
+  // Infrastructure – HR
+  hr_head:        {label:'HR Manager',                     full:'HR Manager',                             sector:'infra',     tier:1, up:'founder',     resp:['Owns full recruitment cycle — JD creation, sourcing, screening, offer','Runs structured onboarding for every new hire with department-specific training','Conducts quarterly performance reviews aligned with KRA scorecards','Builds and maintains culture — recognition, team events, feedback cadence'],           with:['Founder — org structure, compensation philosophy & culture','Legal Counsel — employment contracts & statutory compliance','All Department Heads — talent sourcing & onboarding coordination']},
+  hr_exec:        {label:'HR Executive / Recruiter',       full:'HR Executive / Recruiter',               sector:'infra',     tier:2, up:'hr_head',     resp:['Manages end-to-end recruitment for open roles across all departments','Runs employee onboarding process — documentation, tool access, day-1 training','Maintains leave management and attendance tracking systems'],                                                                  with:['HR Manager — daily hiring pipeline review','Admin Executive — employee facility & workspace coordination']},
+  hr_admin:       {label:'Admin Executive',                full:'Admin Executive',                        sector:'infra',     tier:3, up:'hr_head',     resp:['Manages office administration, vendor AMCs, utilities & facilities','Handles logistics for team events, offsites & culture programs','Maintains employee records and statutory compliance documentation'],                                                                          with:['HR Executive — employee onboarding facility setup','All staff — day-to-day administrative support']},
+  // Infrastructure – Legal
+  legal_head:     {label:'Legal Counsel',                  full:'Legal Counsel',                          sector:'infra',     tier:1, up:'founder',     resp:['Files & maintains trademarks for MC, Peeperly, LEKE & all associated logos','Drafts & reviews vendor contracts, NDA agreements, freelancer terms','Handles customer disputes escalated to consumer court / NCDRC'],                                                               with:['Founder — strategic legal guidance & trademark decisions','Procurement Manager — vendor agreement review & contract coverage','HR Manager — employment contracts & statutory compliance']},
+  legal_exec:     {label:'Compliance Executive',           full:'Compliance Executive',                   sector:'infra',     tier:3, up:'legal_head',  resp:['Ensures product compliance — accurate descriptions, no misleading claims','Monitors platform policy compliance: Amazon & Flipkart seller policies','Tracks regulatory compliance across Consumer Protection Act, IT Act'],                                                          with:['GST / Tax Executive — tax regulatory compliance coordination','Legal Counsel — daily compliance monitoring & reporting']},
+};
+
+// ═══════════════════════════════════════════════════
+// COLLABORATION LINKS
+// ═══════════════════════════════════════════════════
+const COLLAB_RAW = [
+  ['sa_head','sa_bi','intra','Daily analytics requests & dashboard direction'],
+  ['sa_head','sa_mktg','intra','Marketing KPI reporting direction'],
+  ['sa_bi','sa_junior','intra','Data modelling & daily task support'],
+  ['prtv_head','proc_head','intra','Validated product specs → sourcing handoff'],
+  ['prtv_head','plm_head','intra','Validated products → lifecycle management'],
+  ['prtv_head','design_head','intra','VOC & trend signals → design direction'],
+  ['prtv_senior','prtv_exec','intra','Sample procurement & test coordination'],
+  ['proc_head','plm_head','intra','Sourcing timelines aligned with launch calendar'],
+  ['proc_head','pack_head','intra','Joint packaging vendor management'],
+  ['proc_senior','proc_exec','intra','PO execution & inbound coordination'],
+  ['plm_head','design_head','intra','Launch calendar & model roadmap alignment'],
+  ['plm_head','plm_senior','intra','SKU performance review & roadmap execution'],
+  ['plm_senior','plm_exec','intra','Product listing uploads & launch readiness'],
+  ['design_head','design_mid','intra','Pattern brief → execution'],
+  ['design_mid','design_junior','intra','File prep, versioning & CMYK output'],
+  ['pack_head','pack_exec','intra','Packaging inventory management & vendor coordination'],
+  ['creative_head','creative_photo','intra','Shoot brief, direction & raw file handoff'],
+  ['creative_head','creative_gd_sr','intra','Ad creative brief → execution direction'],
+  ['creative_head','creative_video','intra','Video campaign concept & brief direction'],
+  ['creative_head','pcs_head','intra','Creative brief execution & pre-production review'],
+  ['creative_head','content_head','intra','PDP photography, video & design asset handoff'],
+  ['creative_gd_sr','creative_gd','intra','Senior design QC, workload distribution & mentorship'],
+  ['creative_gd_sr','creative_jr','intra','Format adaptation, resizing & DAM organization'],
+  ['creative_photo','creative_gd_sr','intra','Raw photo editing & retouching handoff'],
+  ['pcs_head','pcs_analyst','intra','Creative intelligence research direction'],
+  ['pcs_analyst','creative_gd_sr','intra','Static ad creative brief specifications'],
+  ['content_head','content_seo','intra','SEO strategy & keyword priorities'],
+  ['content_head','content_web','intra','Store maintenance & campaign update tasks'],
+  ['content_seo','content_writer','intra','Keyword briefs & SEO content direction'],
+  ['content_head','mkt_head','intra','D2C product content → marketplace listing sync'],
+  ['mkt_head','mkt_amazon','intra','Amazon campaign strategy & budget direction'],
+  ['mkt_head','mkt_exec','intra','Flipkart/Meesho listing management & review responses'],
+  ['paid_head','brand_head','intra','Paid + organic messaging alignment'],
+  ['paid_head','growth_head','intra','Post-click experience & landing page alignment'],
+  ['brand_head','growth_head','intra','Brand-level CRO experiments & funnel strategy'],
+  ['paid_head','paid_senior','intra','Meta campaign strategy, CBO structure & creative testing'],
+  ['paid_head','paid_google','intra','Google PMax & Shopping campaign direction'],
+  ['paid_head','paid_email','intra','Email broadcast strategy & campaign calendar'],
+  ['paid_head','paid_wa','intra','WhatsApp broadcast strategy & subscriber growth'],
+  ['paid_senior','paid_google','intra','Meta vs Google budget allocation & overlap analysis'],
+  ['paid_email','paid_wa','intra','Cross-channel retention broadcast coordination'],
+  ['brand_head','brand_social','intra','Organic content calendar direction & brand voice'],
+  ['brand_head','brand_creator','intra','Creator programme strategy & tier management'],
+  ['brand_head','brand_pr','intra','PR narrative, media pitching & press kit direction'],
+  ['brand_creator','brand_ugc','intra','UGC brief direction & in-house content review'],
+  ['brand_social','brand_creator','intra','Collab posts & co-created content calendar sync'],
+  ['growth_head','growth_cro','intra','CRO test backlog prioritization & strategy'],
+  ['growth_head','growth_aff','intra','Affiliate channel strategy & partner onboarding'],
+  ['sup_head','cx_head','intra','VIP escalations, VOC patterns & NPS feedback loop'],
+  ['sup_head','sup_senior','intra','Daily queue management & escalation handling'],
+  ['sup_senior','sup_exec','intra','Queue coaching, QA review & resolution quality'],
+  ['sup_head','sup_qa','intra','Training curriculum & quality standard setting'],
+  ['cx_head','cx_email','intra','Email lifecycle strategy & CRM segmentation direction'],
+  ['cx_head','cx_wa','intra','WhatsApp retention flow strategy & opt-in growth'],
+  ['cx_head','cx_loyalty','intra','Loyalty program design, VIP tier & rewards strategy'],
+  ['cx_email','cx_wa','intra','Cross-channel retention flow coordination & sequencing'],
+  ['ops_head','wh_head','intra','Confirmed order batch handoff for packing'],
+  ['ops_head','log_head','intra','NDR resolution, RTO management & courier SLA coordination'],
+  ['ops_head','ops_ndr','intra','Daily NDR queue management & resolution reporting'],
+  ['ops_head','ops_process','intra','Order processing SOP & label printing direction'],
+  ['ops_head','ops_cod','intra','COD confirmation SLA & fraud flag management'],
+  ['ops_process','ops_cod','intra','Confirmed order queue coordination & batch sequencing'],
+  ['wh_head','wh_supervisor','intra','Daily pick-pack queue direction & SOP compliance'],
+  ['wh_head','inv_head','intra','Real-time physical vs system inventory sync'],
+  ['wh_supervisor','wh_pickpack','intra','Daily pick-pack queue assignment & QC'],
+  ['wh_supervisor','wh_inward','intra','Inward receiving schedule & quality check oversight'],
+  ['inv_head','inv_audit','intra','Weekly stock reconciliation & dead stock reporting'],
+  ['log_head','log_courier','intra','Courier partner communication & NDR escalation direction'],
+  ['log_head','log_billing','intra','Billing dispute management & remittance tracking'],
+  // Inter-dept
+  ['sa_head','paid_head','inter','RoAS validation, cohort targeting & true attribution'],
+  ['sa_bi','paid_senior','inter','Campaign performance dashboards & creative fatigue signals'],
+  ['sa_head','fin_head','inter','Budget allocation, P&L alignment & financial forecasting'],
+  ['sa_head','plm_head','inter','SKU-level performance data by customer segment'],
+  ['sa_bi','inv_head','inter','Sales velocity data for demand forecasting models'],
+  ['sa_head','tech_head','inter','Data infrastructure, pipeline architecture & BI dashboards'],
+  ['sa_mktg','growth_cro','inter','RPV, CVR & funnel drop-off analytics'],
+  ['sa_head','cx_head','inter','Cohort LTV curves & repeat purchase retention data'],
+  ['sa_mktg','log_head','inter','Courier performance benchmarks & delivery rate data'],
+  ['prtv_head','creative_head','inter','Product samples for first-look content creation'],
+  ['prtv_head','cx_head','inter','VOC from customers → product gap identification'],
+  ['prtv_senior','brand_creator','inter','Trend signals for influencer seeding & product testing'],
+  ['prtv_exec','proc_exec','inter','Sample sourcing & delivery coordination'],
+  ['proc_head','wh_head','inter','Inbound delivery timelines & receiving coordination'],
+  ['proc_head','fin_head','inter','Vendor payments, credit terms & invoice verification'],
+  ['proc_head','b2b_head','inter','Bulk B2B order MOQ & lead time alignment'],
+  ['proc_head','mkt_head','inter','FBA stock requirements for marketplace launch planning'],
+  ['proc_head','legal_head','inter','Vendor agreement review & contract coverage'],
+  ['proc_senior','wh_inward','inter','Inbound stock receiving & quality check coordination'],
+  ['plm_head','paid_head','inter','Fast-moving SKU push campaigns & slow-SKU clearance alerts'],
+  ['plm_head','creative_head','inter','Product narrative, story & positioning for content briefs'],
+  ['plm_head','sup_head','inter','Recurring product complaints → PLM feedback for improvement'],
+  ['plm_senior','content_seo','inter','Product page SEO requirements & keyword coverage'],
+  ['plm_exec','content_web','inter','Shopify product listing uploads & variant management'],
+  ['design_head','creative_head','inter','Design mockups & files for PDPs, ad creatives & store'],
+  ['design_head','pack_head','inter','Packaging artwork adaptations & print-ready file specs'],
+  ['design_mid','creative_gd_sr','inter','Design file format alignment for ad creative adaptation'],
+  ['creative_head','paid_head','inter','Ad creative supply for all Meta & Google campaign types'],
+  ['creative_head','brand_head','inter','Organic, creator & PR content asset supply'],
+  ['creative_head','b2b_head','inter','B2B sales decks, product catalogs & reseller materials'],
+  ['creative_gd_sr','cx_email','inter','Email template design & email visual asset supply'],
+  ['creative_gd_sr','brand_social','inter','Social media post assets & story template design'],
+  ['creative_video','paid_senior','inter','Video ad production: Reels format, Meta video specs'],
+  ['creative_video','brand_creator','inter','Creator raw footage editing & format guidelines'],
+  ['pcs_head','paid_head','inter','New creative concepts based on paid campaign performance'],
+  ['pcs_head','sa_bi','inter','Cohort, CVR & audience signal data to inform creative briefs'],
+  ['pcs_head','brand_head','inter','Brand voice, avatar definitions & seasonal angle alignment'],
+  ['pcs_head','cx_head','inter','VOC, reviews & support ticket patterns → creative angles'],
+  ['pcs_analyst','paid_senior','inter','Creative fatigue signals when CPR spikes on winning ads'],
+  ['content_head','paid_head','inter','Campaign landing pages, sale infrastructure & CRO'],
+  ['content_web','tech_shopify','inter','Shopify store feature implementation & custom section build'],
+  ['content_head','cx_head','inter','Store FAQs & product info to reduce support ticket volume'],
+  ['content_head','growth_cro','inter','A/B test variant implementation & page copy changes'],
+  ['mkt_amazon','inv_head','inter','FBA inventory levels, restocking timelines & out-of-stock alerts'],
+  ['mkt_head','fin_mis','inter','Marketplace settlement reconciliation (Amazon, Flipkart, Meesho)'],
+  ['mkt_head','paid_head','inter','Marketplace vs D2C budget split & RoAS alignment'],
+  ['mkt_exec','cx_email','inter','Marketplace buyer review generation campaign coordination'],
+  ['mkt_amazon','paid_google','inter','Google Shopping ↔ Amazon traffic strategy coordination'],
+  ['paid_head','cx_head','inter','High-LTV customer segments for lookalike targeting'],
+  ['paid_senior','brand_creator','inter','Creator content whitelisting for paid amplification'],
+  ['paid_head','proc_head','inter','Restocking urgency alerts for top-selling SKUs'],
+  ['paid_email','cx_email','inter','Klaviyo lifecycle flow vs broadcast email coordination'],
+  ['paid_wa','cx_wa','inter','WhatsApp broadcast (Paid) vs nurture flow (CX) strategy'],
+  ['paid_google','mkt_amazon','inter','Google Shopping ↔ Amazon marketplace traffic coordination'],
+  ['paid_senior','brand_ugc','inter','In-house UGC hook testing → paid ad creative pipeline'],
+  ['brand_head','cx_head','inter','UGC sourcing, testimonials & referral content pipeline'],
+  ['brand_head','sa_head','inter','Brand equity metrics, brand search volume & creator ROI'],
+  ['brand_creator','paid_senior','inter','UGC creator content whitelisting → paid ad amplification'],
+  ['brand_social','cx_loyalty','inter','Loyalty member community recognition & reward features'],
+  ['brand_pr','creative_head','inter','Press kits, PR asset packs & media material production'],
+  ['growth_head','paid_head','inter','Post-click experience alignment & landing page CVR'],
+  ['growth_head','tech_head','inter','CRO tooling: heatmap, session recording, A/B testing platform'],
+  ['growth_cro','content_web','inter','A/B test variant page changes on Shopify store'],
+  ['growth_cro','tech_analytics','inter','Analytics event setup for CRO experiment measurement'],
+  ['growth_aff','b2b_head','inter','Affiliate channel ↔ B2B wholesale reseller overlap strategy'],
+  ['growth_aff','fin_accounts','inter','Affiliate payout reconciliation & commission tracking'],
+  ['sup_head','ops_head','inter','Order status queries, delivery issues & resolution coordination'],
+  ['sup_exec','wh_supervisor','inter','Returns, exchange & item replacement order coordination'],
+  ['sup_head','plm_head','inter','Recurring product complaints → PLM for product improvement'],
+  ['sup_qa','cx_head','inter','QA insights & support pattern data for CX improvement'],
+  ['cx_head','brand_head','inter','UGC sourcing, testimonials & referral content pipeline'],
+  ['cx_head','sa_head','inter','Cohort LTV, retention curves & repeat purchase rate data'],
+  ['cx_email','paid_email','inter','Lifecycle email (CX) vs performance broadcast (Paid) coordination'],
+  ['cx_wa','paid_wa','inter','WhatsApp nurture flow (CX) vs broadcast (Paid) strategy'],
+  ['ops_ndr','log_courier','inter','Failed delivery escalations & courier re-attempt coordination'],
+  ['ops_head','fin_accounts','inter','Delivery & RTO data for remittance reconciliation'],
+  ['ops_cod','wh_supervisor','inter','Priority dispatch alerts based on COD confirmation timing'],
+  ['wh_head','pack_head','inter','Packaging materials always stocked at right quantities'],
+  ['wh_inward','proc_exec','inter','Inbound stock receipt & GRN coordination'],
+  ['inv_head','proc_head','inter','Reorder triggers with SKU-level quantity recommendations'],
+  ['inv_head','paid_head','inter','Slow-moving & dead stock alerts for clearance campaigns'],
+  ['inv_head','mkt_amazon','inter','FBA inventory coordination & Amazon restocking timelines'],
+  ['log_head','fin_head','inter','Remittance reconciliation & courier billing dispute resolution'],
+  ['log_billing','fin_accounts','inter','Courier billing discrepancy documentation & dispute filing'],
+  ['b2b_head','wh_head','inter','Priority B2B fulfilment SLA & warehouse coordination'],
+  ['b2b_head','fin_head','inter','B2B invoicing, GST, credit terms & payment collections'],
+  ['b2b_head','tech_head','inter','LEKE Mock-up Tool, reseller portal & wallet system development'],
+  ['b2b_ka','wh_supervisor','inter','Key account priority fulfilment alerts'],
+  ['tech_head','sa_head','inter','Data infrastructure, pipeline architecture & BI tooling'],
+  ['tech_shopify','content_web','inter','Shopify store feature implementation & custom development'],
+  ['tech_analytics','paid_senior','inter','Meta Pixel, CAPI & GA4 event tracking health'],
+  ['tech_backend','ops_head','inter','WMS integration, order automation & courier API setup'],
+  ['tech_analytics','paid_google','inter','GA4 conversion setup & PMax enhanced conversions'],
+  ['fin_head','proc_head','inter','Vendor payment processing & invoice verification'],
+  ['fin_mis','mkt_head','inter','Marketplace settlement & remittance reconciliation'],
+  ['fin_tax','legal_exec','inter','Tax regulatory compliance coordination & filing'],
+  ['fin_accounts','b2b_sales','inter','B2B credit term approval & payment account setup'],
+  ['hr_head','founder','inter','Org structure, compensation philosophy & culture alignment'],
+  ['hr_exec','hr_admin','inter','Onboarding logistics & employee facility coordination'],
+  ['legal_head','proc_head','inter','Vendor contract review & NDA coverage for key suppliers'],
+  ['legal_head','hr_head','inter','Employment contracts, statutory compliance & HR legal advisory'],
+  ['legal_exec','fin_tax','inter','Tax regulatory compliance & filing coordination'],
+];
+
+// ═══════════════════════════════════════════════════
+// POSITION CALCULATION
+// ═══════════════════════════════════════════════════
+const TIER_R = {0:0, 1:170, 2:295, 3:425};
+const NODE_R = {0:23, 1:14.5, 2:10, 3:7};
+const TOTAL_ROLES = 83; // excl founder
+const BASE_DEG = 15;
+const PROP_DEG = 360 - BASE_DEG * 8; // 240° proportional
+
+// Calculate sector spans
+const sectorSpans = {};
+SECTOR_ORDER.forEach(sk => {
+  const s = SECTORS[sk];
+  const count = s.t1.length + s.t2.length + s.t3.length;
+  sectorSpans[sk] = BASE_DEG + (count / TOTAL_ROLES) * PROP_DEG;
+});
+
+// Assign start angles
+let cumAngle = -90;
+const sectorStart = {}, sectorEnd = {};
+SECTOR_ORDER.forEach(sk => {
+  sectorStart[sk] = cumAngle;
+  sectorEnd[sk]   = cumAngle + sectorSpans[sk];
+  cumAngle        += sectorSpans[sk];
+});
+
+// Build nodePos map
+const nodePos = {};
+nodePos['founder'] = {x:0, y:0, angle: Math.PI/2, sector:'leadership', tier:0, r:NODE_R[0]};
+
+function placeNodes(ids, sk, tier) {
+  const sa = D2R(sectorStart[sk]), ea = D2R(sectorEnd[sk]);
+  const n = ids.length;
+  const pad = 0.12;
+  ids.forEach((id, i) => {
+    const t  = n > 1 ? i / (n-1) : 0.5;
+    const a  = sa + (ea - sa) * (pad + t * (1 - 2*pad));
+    const R  = TIER_R[tier];
+    nodePos[id] = { x: R*Math.cos(a), y: R*Math.sin(a), angle: a, sector: sk, tier, r: NODE_R[tier] };
+  });
+}
+
+SECTOR_ORDER.forEach(sk => {
+  placeNodes(SECTORS[sk].t1, sk, 1);
+  placeNodes(SECTORS[sk].t2, sk, 2);
+  placeNodes(SECTORS[sk].t3, sk, 3);
+});
+
+// Merge position into roles
+const nodes = Object.entries(ROLES).map(([id, r]) => ({
+  id, ...r, ...nodePos[id],
+}));
+const byId = {};
+nodes.forEach(n => { byId[n.id] = n; });
+
+// Hierarchy links from reportsTo
+const hierLinks = nodes.filter(n=>n.up).map(n=>({source:n.up, target:n.id, type:'hierarchy', label:'Reports to'}));
+
+// Collab links (deduped)
+const seen = new Set();
+const collabLinks = [];
+COLLAB_RAW.forEach(([s,t,type,label]) => {
+  const key = [s,t].sort().join('|');
+  if(seen.has(key)||!byId[s]||!byId[t]) return;
+  seen.add(key);
+  collabLinks.push({source:s, target:t, type, label});
+});
+
+const allLinks = [...hierLinks, ...collabLinks];
+
+// Adjacency for highlight
+const adj = {};
+nodes.forEach(n => { adj[n.id] = []; });
+allLinks.forEach(l => { adj[l.source]?.push(l); adj[l.target]?.push(l); });
+
+// ═══════════════════════════════════════════════════
+// SVG RENDERING
+// ═══════════════════════════════════════════════════
+const SVG = document.getElementById('web');
+const NS  = 'http://www.w3.org/2000/svg';
+const mk  = (tag,a={}) => { const e=document.createElementNS(NS,tag); Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v)); return e; };
+
+const VW=980, VH=960;
+SVG.setAttribute('viewBox',`${-VW/2} ${-VH/2} ${VW} ${VH}`);
+SVG.setAttribute('preserveAspectRatio','xMidYMid meet');
+
+// Defs — arrowhead + glow filter
+const defs = mk('defs');
+SVG.appendChild(defs);
+const flt = mk('filter',{id:'glow',x:'-60%',y:'-60%',width:'220%',height:'220%'});
+const fgb = mk('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'4',result:'b'});
+const fgm = mk('feMerge');
+fgm.appendChild(mk('feMergeNode',{in:'b'}));
+fgm.appendChild(mk('feMergeNode',{in:'SourceGraphic'}));
+flt.appendChild(fgb); flt.appendChild(fgm);
+defs.appendChild(flt);
+
+const mainG = mk('g',{id:'G'});
+SVG.appendChild(mainG);
+const gBg   = mk('g'); mainG.appendChild(gBg);
+const gSec  = mk('g'); mainG.appendChild(gSec);
+const gLnk  = mk('g'); mainG.appendChild(gLnk);
+const gNode = mk('g'); mainG.appendChild(gNode);
+
+// ── Background rings & spokes ──────────────────────
+[55,170,295,425,480].forEach(r => {
+  const isRing = [170,295,425].includes(r);
+  gBg.appendChild(mk('circle',{cx:0,cy:0,r,fill:'none',stroke:isRing?'#0f1e36':'#08111f','stroke-width':isRing?'1.1':'0.5'}));
+});
+for(let i=0;i<48;i++){
+  const a=i/48*2*Math.PI;
+  gBg.appendChild(mk('line',{x1:0,y1:0,x2:480*Math.cos(a),y2:480*Math.sin(a),stroke:'#070f1e','stroke-width':'0.4'}));
+}
+
+// ── Sector arcs ───────────────────────────────────
+SECTOR_ORDER.forEach(sk => {
+  const col = SMETA[sk].color;
+  const sa = D2R(sectorStart[sk]), ea = D2R(sectorEnd[sk]);
+  const iR=52, oR=470;
+  const p = (r,a) => [r*Math.cos(a), r*Math.sin(a)];
+  const [x1,y1]=p(iR,sa),[x2,y2]=p(oR,sa);
+  const [x3,y3]=p(oR,ea),[x4,y4]=p(iR,ea);
+  const laf = (ea-sa) > Math.PI ? 1 : 0;
+  const d = `M${x1},${y1} L${x2},${y2} A${oR},${oR},0,${laf},1,${x3},${y3} L${x4},${y4} A${iR},${iR},0,${laf},0,${x1},${y1}Z`;
+  gSec.appendChild(mk('path',{d, fill:col, opacity:'0.06', class:`sec sec-${sk}`}));
+
+  // Sector boundary lines
+  const boundary = mk('line',{
+    x1:iR*Math.cos(sa),y1:iR*Math.sin(sa),
+    x2:oR*Math.cos(sa),y2:oR*Math.sin(sa),
+    stroke:'#0d1a30','stroke-width':'0.8'
+  });
+  gSec.appendChild(boundary);
+
+  // Sector label at outer edge
+  const ca = sa + (ea-sa)/2;
+  const lr = 460;
+  const lx = lr*Math.cos(ca), ly = lr*Math.sin(ca);
+  const anchor = lx < -20 ? 'end' : lx > 20 ? 'start' : 'middle';
+  const tl = mk('text',{x:lx,y:ly, fill:col, 'font-size':'8', 'font-weight':'800',
+    'letter-spacing':'1.5','text-anchor':anchor,'dominant-baseline':'middle',opacity:'0.75',
+    class:`sec sec-lbl sec-lbl-${sk}`});
+  tl.textContent = SMETA[sk].label.toUpperCase();
+  gSec.appendChild(tl);
+});
+
+// ── Links ─────────────────────────────────────────
+const linkEls = {};
+nodes.forEach(n=>{ linkEls[n.id]=[]; });
+
+const lSeen2 = new Set();
+allLinks.forEach(l => {
+  const sn=byId[l.source], tn=byId[l.target];
+  if(!sn||!tn) return;
+  const key=[l.source,l.target].sort().join('|')+l.type;
+  if(lSeen2.has(key)) return;
+  lSeen2.add(key);
+
+  // Bezier control point pulled toward center
+  const mx=(sn.x+tn.x)/2, my=(sn.y+tn.y)/2;
+  const dc=Math.hypot(mx,my)||1;
+  const pull = l.type==='hierarchy' ? 0.15 : l.type==='intra' ? 0.25 : 0.4;
+  const cx2 = mx*(1-pull), cy2 = my*(1-pull);
+  const pathD = `M${sn.x},${sn.y} Q${cx2},${cy2},${tn.x},${tn.y}`;
+
+  const col = SMETA[sn.sector]?.color ?? '#60a5fa';
+  const el = mk('path',{
+    d:pathD, fill:'none',
+    stroke: l.type==='hierarchy'?'#1a2d4a':col,
+    'stroke-width': l.type==='hierarchy'?'0.8':l.type==='intra'?'1.1':'1.6',
+    opacity: l.type==='hierarchy'?'0.4':l.type==='intra'?'0.28':'0.2',
+    'stroke-dasharray': l.type==='hierarchy'?'4,3':'none',
+    class:`lnk lnk-${l.type}`,
+    'data-s':l.source,'data-t':l.target,'data-tp':l.type,'data-lbl':l.label,
+  });
+  gLnk.appendChild(el);
+  linkEls[l.source]?.push(el);
+  linkEls[l.target]?.push(el);
+});
+
+// ── Nodes ─────────────────────────────────────────
+const TIER_LABELS = {0:'Founder/CEO',1:'Head / Manager',2:'Senior Specialist',3:'Executive / Junior'};
+
+function shortLbl(label, tier) {
+  if(tier===0) return label;
+  const words = label.split(' ');
+  let s = words[0];
+  if(words[1] && (s+' '+words[1]).length<=16) s += ' '+words[1];
+  if(words[2] && (s+' '+words[2]).length<=15) s += ' '+words[2];
+  return s.length>17 ? s.slice(0,15)+'…' : s;
+}
+
+nodes.forEach(n => {
+  const col = SMETA[n.sector]?.color ?? '#FF6B35';
+  const g = mk('g',{class:`nd nd-${n.id}`,'data-id':n.id,style:'cursor:pointer'});
+
+  // Glow halo
+  g.appendChild(mk('circle',{cx:n.x,cy:n.y,r:n.r+9,fill:col,opacity:'0.07'}));
+  if(n.tier<=1) g.appendChild(mk('circle',{cx:n.x,cy:n.y,r:n.r+4,fill:'none',stroke:col,'stroke-width':'0.6',opacity:'0.22'}));
+
+  // Main circle
+  g.appendChild(mk('circle',{cx:n.x,cy:n.y,r:n.r,
+    fill:col+'18', stroke:col,
+    'stroke-width':n.tier===0?'2.8':n.tier===1?'2':n.tier===2?'1.5':'1.2',
+    class:'nc'}));
+
+  // Label — radially outward
+  const la = n.id==='founder' ? Math.PI/2 : n.angle;
+  const loff = n.r + (n.tier<=1?9:7);
+  const lx = n.id==='founder' ? 0 : n.x + Math.cos(la)*loff;
+  const ly = n.id==='founder' ? n.r+12 : n.y + Math.sin(la)*loff;
+  const anchor = n.id==='founder' ? 'middle' : Math.cos(la)<-0.28?'end':Math.cos(la)>0.28?'start':'middle';
+  const baseline = n.id==='founder' ? 'hanging' : 'middle';
+
+  const lt = mk('text',{
+    x:lx, y:ly,
+    fill: n.tier===0?'#fff':n.tier===1?'#ccd8ea':n.tier===2?'#90a8c0':'#6a8aa4',
+    stroke:'#07091a','stroke-width':n.tier<=1?'2.8':'2.2','paint-order':'stroke fill',
+    'font-size': n.tier===0?'11':n.tier===1?'8.5':n.tier===2?'7.5':'7',
+    'font-weight': n.tier<=1?'700':'500',
+    'text-anchor':anchor,'dominant-baseline':baseline,'pointer-events':'none',
+    class:'nlbl',
+  });
+  lt.textContent = shortLbl(n.label, n.tier);
+  g.appendChild(lt);
+
+  g.addEventListener('mouseover',e=>{e.stopPropagation();doHighlight(n.id);showTT(e,n);});
+  g.addEventListener('mousemove',e=>moveTT(e));
+  g.addEventListener('mouseout', e=>{ if(e.currentTarget.contains(e.relatedTarget)) return; doReset(); hideTT(); });
+  g.addEventListener('click',    e=>{ e.stopPropagation(); showPanel(n); });
+
+  gNode.appendChild(g);
+});
+
+// ── Interaction ───────────────────────────────────
+const tt=document.getElementById('tt');
+const ttn=document.getElementById('tt-n');
+const ttd=document.getElementById('tt-d');
+const ttt=document.getElementById('tt-t');
+
+function doHighlight(id) {
+  const conn = new Set([id]);
+  const active = new Set();
+  (linkEls[id]||[]).forEach(el => {
+    active.add(el);
+    conn.add(el.getAttribute('data-s'));
+    conn.add(el.getAttribute('data-t'));
+  });
+  document.querySelectorAll('.nd').forEach(el=>{
+    el.style.opacity = conn.has(el.getAttribute('data-id'))?'1':'0.05';
+  });
+  document.querySelectorAll('.lnk').forEach(el=>{
+    if(active.has(el)){
+      el.style.opacity='0.92';
+      const tp=el.getAttribute('data-tp');
+      el.style.strokeWidth=tp==='hierarchy'?'1.5px':tp==='intra'?'2px':'2.8px';
+    } else {
+      el.style.opacity='0.02';
+      el.style.strokeWidth=null;
+    }
+  });
+  document.querySelectorAll('.sec,.sec-lbl').forEach(el=>el.style.opacity='0.02');
+}
+function doReset(){
+  document.querySelectorAll('.nd,.lnk').forEach(el=>{el.style.opacity='';el.style.strokeWidth='';});
+  document.querySelectorAll('.sec,.sec-lbl').forEach(el=>el.style.opacity='');
+}
+function showTT(e,n){
+  const col=SMETA[n.sector]?.color??'#FF6B35';
+  ttn.textContent=n.label; // full label always in tooltip
+  ttd.textContent=SMETA[n.sector]?.label??'Leadership';
+  ttd.style.background=col+'22'; ttd.style.color=col;
+  ttt.textContent=TIER_LABELS[n.tier]??'';
+  tt.classList.add('on'); moveTT(e);
+}
+function moveTT(e){
+  let x=e.clientX+16,y=e.clientY-12;
+  if(x+270>window.innerWidth) x=e.clientX-274;
+  if(y+100>window.innerHeight) y=e.clientY-104;
+  if(x<6)x=6; if(y<6)y=6;
+  tt.style.left=x+'px'; tt.style.top=y+'px';
+}
+function hideTT(){tt.classList.remove('on');}
+SVG.addEventListener('click',()=>{ closePanel(); doReset(); hideTT(); });
+
+function showPanel(n){
+  const col=SMETA[n.sector]?.color??'#FF6B35';
+  document.getElementById('p-n').textContent=n.full;
+  document.getElementById('p-s').textContent=TIER_LABELS[n.tier]??'';
+  const b=document.getElementById('p-b'); b.textContent=SMETA[n.sector]?.label??'Leadership'; b.style.background=col+'22'; b.style.color=col;
+  document.getElementById('p-r').textContent=n.up?byId[n.up]?.label??n.up:'CEO / Board';
+  document.getElementById('p-re').innerHTML=(n.resp||[]).map(r=>`<div class="p-item">◆ ${r}</div>`).join('');
+  const colls=[];
+  allLinks.forEach(l=>{
+    const s=l.source, t=l.target;
+    if(s===n.id && t!==n.up) colls.push({id:t, lbl:l.label});
+    if(t===n.id && s!==n.up) colls.push({id:s, lbl:l.label});
+  });
+  document.getElementById('p-w').innerHTML=colls.slice(0,14).map(c=>{
+    const cn=byId[c.id]; const col2=SMETA[cn?.sector]?.color??'#60a5fa';
+    return `<div class="p-item"><span style="color:${col2}">${cn?.label??c.id}</span> — ${c.lbl}</div>`;
+  }).join('');
+  document.getElementById('panel').classList.add('on');
+}
+function closePanel(){document.getElementById('panel').classList.remove('on');}
+
+// ── Zoom/Pan ──────────────────────────────────────
+let vx=0,vy=0,sc=1,drag=false,lx=0,ly=0;
+const applyT=()=>mainG.setAttribute('transform',`translate(${vx},${vy})scale(${sc})`);
+SVG.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=SVG.getBoundingClientRect();
+  const mx=(e.clientX-r.left)/r.width*VW-VW/2;
+  const my=(e.clientY-r.top)/r.height*VH-VH/2;
+  const f=e.deltaY<0?1.13:0.88;
+  const ns=Math.max(0.2,Math.min(6,sc*f));
+  vx=mx-(mx-vx)*(ns/sc); vy=my-(my-vy)*(ns/sc); sc=ns; applyT();
+},{passive:false});
+SVG.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;e.preventDefault();});
+window.addEventListener('mousemove',e=>{
+  if(!drag)return;
+  const r=SVG.getBoundingClientRect();
+  vx+=(e.clientX-lx)*VW/r.width; vy+=(e.clientY-ly)*VH/r.height;
+  lx=e.clientX;ly=e.clientY;applyT();
+});
+window.addEventListener('mouseup',()=>{drag=false;});
+let ltd=null;
+SVG.addEventListener('touchstart',e=>{if(e.touches.length===1){drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;}else if(e.touches.length===2)ltd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
+SVG.addEventListener('touchmove',e=>{e.preventDefault();if(e.touches.length===1&&drag){const r=SVG.getBoundingClientRect();vx+=(e.touches[0].clientX-lx)*VW/r.width;vy+=(e.touches[0].clientY-ly)*VH/r.height;lx=e.touches[0].clientX;ly=e.touches[0].clientY;applyT();}else if(e.touches.length===2&&ltd){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);sc=Math.max(0.2,Math.min(6,sc*d/ltd));ltd=d;applyT();}},{passive:false});
+SVG.addEventListener('touchend',()=>{drag=false;ltd=null;});
+
+// ── Legend ────────────────────────────────────────
+const dl=document.getElementById('dl');
+[...SECTOR_ORDER,'leadership'].forEach(sk=>{
+  const sm=SMETA[sk]; if(!sm)return;
+  const item=document.createElement('div'); item.className='li';
+  item.innerHTML=`<div class="ldot" style="background:${sm.color}"></div><span>${sm.label}</span>`;
+  dl.appendChild(item);
+});
+</script>
+</body>
+</html>

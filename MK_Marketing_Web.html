@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Marketing Web — Phone Case eCommerce</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#06091a;
+  color:#e2e8f0;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+header{
+  background:rgba(8,12,28,0.97);
+  border-bottom:1px solid #151f38;
+  padding:11px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+  z-index:20;
+}
+.h-title{font-size:19px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.h-title em{color:#60a5fa;font-style:normal}
+.h-meta{font-size:11px;color:#3d4f70;margin-top:2px}
+.h-hint{font-size:10.5px;color:#2d3d5a;text-align:right;line-height:1.6}
+svg#web{flex:1;display:block;cursor:grab}
+svg#web:active{cursor:grabbing}
+
+/* ── Detail Panel ── */
+#panel{
+  position:fixed;top:64px;right:14px;
+  width:252px;
+  background:rgba(6,9,26,0.96);
+  border:1px solid #162040;
+  border-radius:10px;
+  padding:15px;
+  display:none;
+  z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+  backdrop-filter:blur(16px);
+}
+#panel.on{display:block}
+#panel h3{font-size:13px;font-weight:700;color:#fff;padding-right:18px;margin-bottom:3px;line-height:1.4}
+.p-badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:8px;display:inline-block;margin-bottom:11px;letter-spacing:0.3px;text-transform:uppercase}
+.p-sec{margin-bottom:9px}
+.p-label{font-size:8.5px;text-transform:uppercase;letter-spacing:0.7px;color:#3a5080;font-weight:800;margin-bottom:3px}
+.p-item{font-size:10.5px;color:#7a90b0;padding:3px 0;border-bottom:1px solid #101828;line-height:1.45}
+.p-item:last-child{border-bottom:none}
+.p-close{position:absolute;top:10px;right:10px;background:none;border:none;color:#3a5080;cursor:pointer;font-size:14px;line-height:1;padding:3px 5px;border-radius:4px}
+.p-close:hover{background:#162040;color:#fff}
+
+/* ── Legends ── */
+#dept-legend{
+  position:fixed;bottom:12px;left:12px;
+  background:rgba(6,9,26,0.92);
+  border:1px solid #151f38;
+  border-radius:8px;
+  padding:10px 13px;
+  z-index:100;
+  backdrop-filter:blur(8px);
+}
+#link-legend{
+  position:fixed;bottom:12px;right:12px;
+  background:rgba(6,9,26,0.92);
+  border:1px solid #151f38;
+  border-radius:8px;
+  padding:10px 13px;
+  z-index:100;
+  backdrop-filter:blur(8px);
+}
+.leg-title{font-size:8.5px;text-transform:uppercase;letter-spacing:0.6px;color:#3a5080;font-weight:800;margin-bottom:7px}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:10px;color:#4d6480;margin-bottom:4px}
+.leg-item:last-child{margin-bottom:0}
+.l-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.l-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px 14px}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="h-title">The <em>Marketing Web</em></div>
+    <div class="h-meta">Phone Case eCommerce &nbsp;·&nbsp; 28 Roles &nbsp;·&nbsp; 8 Departments &nbsp;·&nbsp; 38 Collaboration Links</div>
+  </div>
+  <div class="h-hint">Hover a node to trace its connections &nbsp;·&nbsp; Click for full role details<br>Scroll to zoom &nbsp;·&nbsp; Drag to pan</div>
+</header>
+
+<svg id="web"></svg>
+
+<!-- Detail panel -->
+<div id="panel">
+  <button class="p-close" onclick="closePanel()">✕</button>
+  <h3 id="p-title"></h3>
+  <span class="p-badge" id="p-badge"></span>
+  <div class="p-sec"><div class="p-label">Reports To</div><div class="p-item" id="p-reports"></div></div>
+  <div class="p-sec"><div class="p-label">Responsibilities</div><div id="p-resp"></div></div>
+  <div class="p-sec"><div class="p-label">Collaborates With</div><div id="p-collab"></div></div>
+</div>
+
+<!-- Dept legend -->
+<div id="dept-legend">
+  <div class="leg-title">Departments</div>
+  <div class="l-grid" id="dl"></div>
+</div>
+
+<!-- Link legend -->
+<div id="link-legend">
+  <div class="leg-title">Connection Types</div>
+  <div class="leg-item">
+    <svg width="22" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="22" y2="5" stroke="#1e3050" stroke-width="1.5" stroke-dasharray="4,3"/></svg>
+    <span>Reports To</span>
+  </div>
+  <div class="leg-item">
+    <svg width="22" height="10" style="flex-shrink:0"><line x1="0" y1="5" x2="22" y2="5" stroke="#60a5fa" stroke-width="2.2"/></svg>
+    <span>Collaboration</span>
+  </div>
+  <div style="margin-top:8px;padding-top:7px;border-top:1px solid #151f38">
+    <div class="leg-title">Node Size</div>
+    <div class="leg-item"><svg width="22" height="18"><circle cx="11" cy="9" r="8" fill="none" stroke="#60a5fa" stroke-width="1.5"/></svg><span>C-Suite</span></div>
+    <div class="leg-item"><svg width="22" height="14"><circle cx="11" cy="7" r="5.5" fill="none" stroke="#60a5fa" stroke-width="1.5"/></svg><span>Dept Head</span></div>
+    <div class="leg-item"><svg width="22" height="12"><circle cx="11" cy="6" r="4" fill="none" stroke="#60a5fa" stroke-width="1.2"/></svg><span>Specialist</span></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════
+const DEPT = {
+  brand:       {label:'Brand & Creative',          color:'#A855F7'},
+  performance: {label:'Performance Marketing',      color:'#3B82F6'},
+  content:     {label:'Content & SEO',              color:'#22C55E'},
+  influencer:  {label:'Influencer & Partnerships',  color:'#EC4899'},
+  retention:   {label:'Retention',                  color:'#F59E0B'},
+  analytics:   {label:'Analytics & Data',           color:'#06B6D4'},
+  ecommerce:   {label:'eCommerce & Product',        color:'#84CC16'},
+  leadership:  {label:'Leadership',                 color:'#FF6B35'},
+};
+
+const DEPT_ORDER = ['brand','performance','content','influencer','retention','analytics','ecommerce'];
+
+// ════════════════════════════════════════════════
+// NODES — 28 roles including WhatsApp Manager
+// ════════════════════════════════════════════════
+const NODES = [
+  {id:'cmo', label:'CMO', full:'Chief Marketing Officer', dept:'leadership', tier:1, up:null,
+   resp:['Sets overall marketing strategy & budget','Aligns all departments with revenue goals','Reports to CEO & Board','Owns brand positioning at the highest level'],
+   with:['All 7 department heads (direct reports)','CEO / Board — upward reporting','Product, Sales & Customer Support — cross-functional']},
+
+  // Brand & Creative
+  {id:'hbc', label:'Brand Head',      full:'Head of Brand & Creative',        dept:'brand',       tier:2, up:'cmo',
+   resp:['Owns brand identity, tone of voice & visual language','Manages creative production pipeline','Ensures consistency across all touchpoints'],
+   with:['Head of Performance — ad creatives','Head of Content — brand voice alignment','Head of Influencer — creator brand guidelines','Head of eCommerce — product visual assets']},
+  {id:'cd',  label:'Creative Dir.',   full:'Creative Director',               dept:'brand',       tier:3, up:'hbc',
+   resp:['Sets creative direction for all campaigns','Briefs designers, video, and copywriters','Ensures all creative aligns with brand identity'],
+   with:['Paid Social Manager — ad creative briefs','Video Editor — campaign concept execution','Product Marketing Manager — launch campaign visuals']},
+  {id:'gd',  label:'Graphic Design.', full:'Graphic Designer',                dept:'brand',       tier:3, up:'hbc',
+   resp:['Creates ads, social posts, banners & email templates','Handles product photography post-editing','Maintains visual asset library'],
+   with:['Social Media Manager — organic post assets','Email Specialist — email template design','eCommerce Manager — product listing images']},
+  {id:'ve',  label:'Video Editor',    full:'Video Editor / Producer',         dept:'brand',       tier:3, up:'hbc',
+   resp:['Produces Reels, TikToks, and video ads','Edits UGC and influencer raw footage','Manages video asset library and versioning'],
+   with:['Paid Social Manager — video ad assets','Influencer Manager — creator footage editing','Social Media Manager — organic video content']},
+  {id:'cw',  label:'Copywriter',      full:'Copywriter',                      dept:'brand',       tier:3, up:'hbc',
+   resp:['Writes all brand copy: ads, landing pages, captions','Maintains brand voice guide and tone consistency','Supports all departments with copy needs'],
+   with:['Email Specialist — email copy','SEO Specialist — SEO-optimised content','Social Media Manager — caption & post copy','Product Marketing Manager — product messaging','WhatsApp Manager — WA message copy']},
+
+  // Performance Marketing
+  {id:'hpm', label:'Perf. Head',      full:'Head of Performance Marketing',   dept:'performance', tier:2, up:'cmo',
+   resp:['Owns all paid acquisition channels and CAC targets','Manages Meta, Google, and TikTok media budget','Drives ROAS, CPA, and paid revenue'],
+   with:['Head of Brand — creative assets for ads','Head of Analytics — attribution & performance data','Head of eCommerce — product feeds & landing pages','Head of Influencer — UGC for paid amplification']},
+  {id:'psm', label:'Paid Social',     full:'Paid Social Manager',             dept:'performance', tier:3, up:'hpm',
+   resp:['Manages Meta (FB/IG), TikTok, and Pinterest Ads','Runs A/B and multivariate creative testing','Optimises campaigns for ROAS and scaling'],
+   with:['Creative Director — ad creative brief cycle','Video Editor — video ad production','Influencer Manager — UGC to paid pipeline','Marketing Analyst — campaign performance reporting']},
+  {id:'pgm', label:'Paid Search',     full:'Paid Search Manager',             dept:'performance', tier:3, up:'hpm',
+   resp:['Manages Google Search, Shopping, Display & YouTube','Handles Google Merchant Center & product feeds','Optimises keywords, bids, and Quality Scores'],
+   with:['eCommerce Manager — GMC and product feed sync','SEO Specialist — keyword overlap strategy','Marketing Analyst — paid search attribution']},
+  {id:'cro', label:'CRO Spec.',       full:'CRO Specialist',                  dept:'performance', tier:3, up:'hpm',
+   resp:['Runs landing page and product page A/B tests','Analyses funnel drop-offs and checkout friction','Works with dev team to implement test variants'],
+   with:['eCommerce Manager — page optimisation tests','Data Scientist — statistical test analysis','Graphic Designer — A/B test variant designs']},
+
+  // Content & SEO
+  {id:'hcs', label:'Content Head',    full:'Head of Content & SEO',           dept:'content',     tier:2, up:'cmo',
+   resp:['Owns organic search strategy and content roadmap','Manages social media presence and community growth','Drives top-of-funnel organic traffic and engagement'],
+   with:['Head of Brand — brand voice alignment','Head of Influencer — repurposing influencer content','Head of eCommerce — SEO for product/category pages','Head of Retention — content for email & WA nurtures']},
+  {id:'smm', label:'Social Media',    full:'Social Media Manager',            dept:'content',     tier:3, up:'hcs',
+   resp:['Manages Instagram, TikTok, Pinterest, and Facebook','Plans and publishes organic content calendar','Engages community, responds to DMs and comments'],
+   with:['Graphic Designer — post assets','Copywriter — captions and post copy','Video Editor — organic Reels and TikToks','Influencer Manager — collab and co-post campaigns']},
+  {id:'seo', label:'SEO Spec.',       full:'SEO Specialist',                  dept:'content',     tier:3, up:'hcs',
+   resp:['Owns keyword strategy, on-page and technical SEO','Backlink strategy and competitor analysis','Optimises product, category, and blog pages'],
+   with:['eCommerce Manager — product page SEO','Copywriter — SEO content writing','Paid Search Manager — keyword overlap','Data Scientist — organic traffic forecasting']},
+  {id:'cwrt',label:'Content Writer',  full:'Content Writer',                  dept:'content',     tier:3, up:'hcs',
+   resp:['Writes blog posts, buying guides, and landing copy','Produces SEO-optimised long-form content','Creates product descriptions at scale'],
+   with:['SEO Specialist — keyword and topic briefs','Product Marketing Manager — product knowledge','Email Specialist — email blog digests','WhatsApp Manager — WA message copy']},
+
+  // Influencer & Partnerships
+  {id:'hip', label:'Influencer Head', full:'Head of Influencer & Partnerships',dept:'influencer', tier:2, up:'cmo',
+   resp:['Builds and manages the influencer and creator programme','Owns affiliate network strategy and P&L','Manages brand partnerships and PR relationships'],
+   with:['Head of Brand — brand guidelines for creators','Head of Performance — UGC for paid ads','Head of Content — influencer content repurposing','Head of Retention — affiliate promo codes in emails & WA']},
+  {id:'imm', label:'Influencer Mgr',  full:'Influencer Marketing Manager',    dept:'influencer',  tier:3, up:'hip',
+   resp:['Scouts, briefs, and manages creator relationships','Coordinates product seeding and gifting campaigns','Tracks creator campaign performance and ROI'],
+   with:['Paid Social Manager — UGC to paid social pipeline','Video Editor — creator footage editing','Product Marketing Manager — product launch briefs','Social Media Manager — collab and co-post campaigns']},
+  {id:'am',  label:'Affiliate Mgr',   full:'Affiliate Marketing Manager',     dept:'influencer',  tier:3, up:'hip',
+   resp:['Manages affiliate network (Impact, ShareASale, etc.)','Recruits new affiliates and manages commissions','Monitors affiliate fraud and traffic quality'],
+   with:['CRM Specialist — affiliate promo code tracking in CRM','Email Specialist — affiliate partner newsletters','Marketing Analyst — affiliate attribution and ROI']},
+  {id:'pr',  label:'PR Manager',      full:'PR & Partnerships Manager',       dept:'influencer',  tier:3, up:'hip',
+   resp:['Manages press, media coverage, and brand stories','Secures brand collaborations and licensing deals','Crisis communication and reputation management'],
+   with:['Head of Brand — press asset creation','Social Media Manager — PR stories to social amplification','Copywriter — press releases and outreach copy']},
+
+  // Retention (Email + CRM + WhatsApp)
+  {id:'hec', label:'Retention Head',  full:'Head of Retention',               dept:'retention',   tier:2, up:'cmo',
+   resp:['Owns Email, CRM & WhatsApp retention strategy','Manages lifecycle flows, broadcasts and LTV','Drives repeat purchase rate across all retention channels'],
+   with:['Head of Analytics — retention metrics & segmentation','Head of eCommerce — product launch campaigns','Head of Content — content for nurture sequences','Head of Influencer — affiliate code distribution']},
+  {id:'ems', label:'Email Spec.',     full:'Email Marketing Specialist',      dept:'retention',   tier:3, up:'hec',
+   resp:['Builds and deploys email campaigns and automations (Klaviyo)','A/B tests subject lines, CTAs, and layouts','Monitors open rates, CTR, and revenue per email'],
+   with:['Graphic Designer — email template design','Copywriter — email copy','CRM Specialist — list segmentation','Marketing Analyst — email performance reporting']},
+  {id:'crms',label:'CRM Spec.',       full:'CRM Specialist',                  dept:'retention',   tier:3, up:'hec',
+   resp:['Manages customer data, tags, and segmentation in CRM','Builds loyalty, VIP, and win-back customer segments','Integrates CRM data with marketing platforms'],
+   with:['Data Scientist — predictive customer modelling','Affiliate Manager — promo code tracking','eCommerce Manager — purchase data sync to CRM','WhatsApp Manager — audience segmentation sync']},
+  {id:'wam', label:'WhatsApp Mgr',    full:'WhatsApp Marketing Manager',      dept:'retention',   tier:3, up:'hec',
+   resp:['Manages WhatsApp Business API campaigns and broadcasts','Builds re-engagement and win-back flows via WhatsApp','Coordinates order updates and shipping notifications','Grows and manages WhatsApp subscriber lists'],
+   with:['CRM Specialist — audience segmentation for WhatsApp','Email Specialist — cross-channel flow coordination','eCommerce Manager — order & notification triggers','Content Writer — WhatsApp message copy & templates','Marketing Analyst — WhatsApp campaign metrics & ROI']},
+
+  // Analytics & Data
+  {id:'had', label:'Analytics Head',  full:'Head of Analytics & Data',        dept:'analytics',   tier:2, up:'cmo',
+   resp:['Owns marketing measurement framework and attribution','Provides data-driven insights to all departments','Manages marketing tech stack and data pipelines'],
+   with:['Head of Performance — ROAS & CAC reporting','Head of eCommerce — conversion & revenue analytics','Head of Retention — retention metrics across Email & WA','Head of Content — organic traffic data']},
+  {id:'ma',  label:'Mktg. Analyst',   full:'Marketing Analyst',               dept:'analytics',   tier:3, up:'had',
+   resp:['Builds dashboards in GA4, Looker, and Data Studio','Reports on campaign KPIs across all channels','Identifies trends and anomalies in marketing data'],
+   with:['Paid Social Manager — campaign performance reporting','Email Specialist — email metrics dashboards','Affiliate Manager — affiliate attribution & ROI','WhatsApp Manager — WA campaign metrics']},
+  {id:'ds',  label:'Data Scientist',  full:'Data Scientist / BI Analyst',     dept:'analytics',   tier:3, up:'had',
+   resp:['Builds predictive LTV and churn models','Runs statistical analysis for CRO experiments','Segments customers using clustering and ML models'],
+   with:['CRM Specialist — customer segmentation models','CRO Specialist — A/B test statistical analysis','SEO Specialist — organic traffic forecasting']},
+
+  // eCommerce & Product
+  {id:'hep', label:'eComm Head',      full:'Head of eCommerce & Product',     dept:'ecommerce',   tier:2, up:'cmo',
+   resp:['Owns store performance, UX, and conversion','Manages product catalogue, pricing, and promotions','Coordinates product launches across all channels'],
+   with:['Head of Performance — product feeds & landing pages','Head of Content — SEO for product pages','Head of Analytics — conversion & revenue data','Head of Retention — launch emails, CRM & WA campaigns']},
+  {id:'ecm', label:'eComm Manager',   full:'eCommerce Manager',               dept:'ecommerce',   tier:3, up:'hep',
+   resp:['Manages Shopify store, apps, and tech stack','Oversees product listing quality and inventory sync','Owns checkout flow optimisation'],
+   with:['CRO Specialist — landing page A/B tests','SEO Specialist — product page SEO','Paid Search Manager — Google Merchant Centre','CRM Specialist — purchase data to CRM']},
+  {id:'pmm', label:'Product Mktg.',   full:'Product Marketing Manager',       dept:'ecommerce',   tier:3, up:'hep',
+   resp:['Owns go-to-market strategy for new case launches','Writes product positioning, USPs, and messaging','Coordinates cross-team launch plans'],
+   with:['Influencer Manager — product launch briefs for creators','Copywriter — product messaging and naming','Creative Director — launch campaign visuals','Content Writer — product knowledge for blog & SEO']},
+];
+
+// ════════════════════════════════════════════════
+// COLLABORATION LINKS — 38 links
+// ════════════════════════════════════════════════
+const COLLAB = [
+  // Head-to-Head (15)
+  ['hbc','hpm','Creative assets for paid ads'],
+  ['hbc','hcs','Brand voice & style guide'],
+  ['hbc','hip','Brand guidelines for creators'],
+  ['hbc','hep','Product visual assets'],
+  ['hpm','had','ROAS, CAC & attribution data'],
+  ['hpm','hep','Product feeds & landing pages'],
+  ['hpm','hip','UGC for paid amplification'],
+  ['hcs','hep','SEO for product & category pages'],
+  ['hcs','hip','Influencer content repurposing'],
+  ['hcs','hec','Content for email & WA nurtures'],
+  ['hec','had','Retention metrics & analytics'],
+  ['hec','hep','Product launch email & WA campaigns'],
+  ['hec','hip','Affiliate promo codes distribution'],
+  ['had','hep','Conversion & revenue analytics'],
+  ['had','hcs','Organic traffic data'],
+  // Specialist cross-collab (23)
+  ['cd', 'psm','Ad creative briefs & formats'],
+  ['ve', 'psm','Video ad assets'],
+  ['ve', 'imm','Creator footage editing'],
+  ['cw', 'ems','Email copy'],
+  ['cw', 'seo','SEO content writing'],
+  ['cw', 'smm','Caption & post copy'],
+  ['cw', 'pmm','Product messaging & naming'],
+  ['cw', 'wam','WhatsApp message copy'],
+  ['psm','imm','UGC to paid social pipeline'],
+  ['pgm','ecm','Google Merchant Centre sync'],
+  ['cro','ecm','Landing page A/B tests'],
+  ['cro','ds', 'Statistical test analysis'],
+  ['smm','imm','Collab & co-post campaigns'],
+  ['seo','ecm','Product page SEO'],
+  ['ma', 'psm','Campaign performance reporting'],
+  ['ma', 'ems','Email metrics dashboards'],
+  ['ma', 'wam','WhatsApp campaign metrics'],
+  ['ds', 'crms','Customer segmentation models'],
+  ['gd', 'ems','Email template design'],
+  ['pmm','imm','Product launch influencer briefs'],
+  ['wam','crms','Audience segmentation for WA'],
+  ['wam','ems','Cross-channel flow coordination'],
+  ['wam','ecm','Order & notification triggers'],
+];
+
+// ════════════════════════════════════════════════
+// LAYOUT — Radial Web
+// ════════════════════════════════════════════════
+const TWO_PI = 2 * Math.PI;
+const N_DEPT  = DEPT_ORDER.length;
+const A_DEPT  = TWO_PI / N_DEPT;   // angle slice per dept
+const R_HEAD  = 158;                // dept head ring
+const R_SPEC  = 308;                // specialist ring
+
+const byId = {};
+NODES.forEach(n => { byId[n.id] = n; });
+
+NODES.forEach(n => {
+  if (n.tier === 1) { n.x = 0; n.y = 0; n.r = 22; n.angle = Math.PI/2; return; }
+  const di   = DEPT_ORDER.indexOf(n.dept);
+  const ca   = -Math.PI/2 + di * A_DEPT + A_DEPT/2; // dept centre angle
+  if (n.tier === 2) {
+    n.x = R_HEAD * Math.cos(ca);
+    n.y = R_HEAD * Math.sin(ca);
+    n.r = 15;
+    n.angle = ca;
+  } else {
+    const specs = NODES.filter(s => s.dept === n.dept && s.tier === 3);
+    const si    = specs.indexOf(n);
+    const span  = A_DEPT * 0.70;
+    const step  = specs.length > 1 ? span / (specs.length - 1) : 0;
+    const a     = specs.length > 1 ? ca - span/2 + si * step : ca;
+    n.x = R_SPEC * Math.cos(a);
+    n.y = R_SPEC * Math.sin(a);
+    n.r = 10;
+    n.angle = a;
+  }
+});
+
+// ════════════════════════════════════════════════
+// SVG SETUP
+// ════════════════════════════════════════════════
+const SVG = document.getElementById('web');
+const NS  = 'http://www.w3.org/2000/svg';
+const mk  = (tag, a={}) => { const e = document.createElementNS(NS, tag); Object.entries(a).forEach(([k,v]) => e.setAttribute(k, v)); return e; };
+
+const VW = 880, VH = 840;
+SVG.setAttribute('viewBox', `${-VW/2} ${-VH/2} ${VW} ${VH}`);
+SVG.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+// Defs
+const defs = mk('defs');
+SVG.appendChild(defs);
+
+// Glow filter
+const flt = mk('filter', {id:'glow', x:'-60%', y:'-60%', width:'220%', height:'220%'});
+const fgb = mk('feGaussianBlur', {in:'SourceGraphic', stdDeviation:'5', result:'blur'});
+const fgm = mk('feMerge');
+const fgm1 = mk('feMergeNode', {in:'blur'});
+const fgm2 = mk('feMergeNode', {in:'SourceGraphic'});
+fgm.appendChild(fgm1); fgm.appendChild(fgm2);
+flt.appendChild(fgb); flt.appendChild(fgm);
+defs.appendChild(flt);
+
+// Soft glow for nodes
+const flt2 = mk('filter', {id:'node-glow', x:'-80%', y:'-80%', width:'260%', height:'260%'});
+const fgb2 = mk('feGaussianBlur', {in:'SourceGraphic', stdDeviation:'7'});
+flt2.appendChild(fgb2);
+defs.appendChild(flt2);
+
+// Main transform group
+const G = mk('g', {id:'G'});
+SVG.appendChild(G);
+
+const gBg    = mk('g'); G.appendChild(gBg);
+const gSec   = mk('g'); G.appendChild(gSec);
+const gLinks = mk('g'); G.appendChild(gLinks);
+const gNodes = mk('g'); G.appendChild(gNodes);
+
+// ════════════════════════════════════════════════
+// BACKGROUND — Spider web rings + spokes
+// ════════════════════════════════════════════════
+[50, 100, 158, 233, 308, 390].forEach(r => {
+  const isRing = (r === 158 || r === 308);
+  gBg.appendChild(mk('circle', {
+    cx:0, cy:0, r,
+    fill:'none',
+    stroke: isRing ? '#0f1e36' : '#08111f',
+    'stroke-width': isRing ? '1.2' : '0.6',
+  }));
+});
+for (let i = 0; i < 42; i++) {
+  const a = (i / 42) * TWO_PI;
+  gBg.appendChild(mk('line', {
+    x1:0, y1:0,
+    x2: 390 * Math.cos(a), y2: 390 * Math.sin(a),
+    stroke:'#070f1e', 'stroke-width':'0.5',
+  }));
+}
+// Department boundary lines
+DEPT_ORDER.forEach((_, di) => {
+  const a = -Math.PI/2 + di * A_DEPT;
+  gBg.appendChild(mk('line', {
+    x1: 50 * Math.cos(a), y1: 50 * Math.sin(a),
+    x2: 390 * Math.cos(a), y2: 390 * Math.sin(a),
+    stroke:'#0d1a30', 'stroke-width':'1',
+  }));
+});
+
+// ════════════════════════════════════════════════
+// DEPARTMENT SECTORS
+// ════════════════════════════════════════════════
+DEPT_ORDER.forEach((dk, di) => {
+  const sa = -Math.PI/2 + di * A_DEPT;
+  const ea = sa + A_DEPT;
+  const iR = 52, oR = 388;
+
+  const pts = (r, a) => [r * Math.cos(a), r * Math.sin(a)];
+  const [x1,y1] = pts(iR, sa), [x2,y2] = pts(oR, sa);
+  const [x3,y3] = pts(oR, ea), [x4,y4] = pts(iR, ea);
+  const laf = A_DEPT > Math.PI ? 1 : 0;
+  const d = `M${x1},${y1} L${x2},${y2} A${oR},${oR},0,${laf},1,${x3},${y3} L${x4},${y4} A${iR},${iR},0,${laf},0,${x1},${y1}Z`;
+
+  const sec = mk('path', {d, fill: DEPT[dk].color, opacity:'0.06', class:`sec sec-${dk}`});
+  gSec.appendChild(sec);
+
+  // Dept label — positioned on the outer edge
+  const ca  = sa + A_DEPT / 2;
+  const lr  = 375;
+  const lx2 = lr * Math.cos(ca), ly2 = lr * Math.sin(ca);
+  const anchor = lx2 < -15 ? 'end' : lx2 > 15 ? 'start' : 'middle';
+  const tl = mk('text', {
+    x:lx2, y:ly2,
+    fill: DEPT[dk].color,
+    'font-size':'7.5',
+    'font-weight':'800',
+    'letter-spacing':'1.8',
+    'text-anchor': anchor,
+    'dominant-baseline':'middle',
+    opacity:'0.72',
+    class:`sec-label sec-label-${dk}`,
+  });
+  tl.textContent = DEPT[dk].label.toUpperCase();
+  gSec.appendChild(tl);
+});
+
+// ════════════════════════════════════════════════
+// LINKS
+// ════════════════════════════════════════════════
+const linkMap = {};
+NODES.forEach(n => { linkMap[n.id] = []; });
+
+// Reporting links (hierarchy — dashed)
+NODES.filter(n => n.up).forEach(n => {
+  const s = byId[n.up];
+  const el = mk('path', {
+    d: `M${s.x},${s.y} L${n.x},${n.y}`,
+    fill:'none',
+    stroke:'#1a2d4a',
+    'stroke-width':'1',
+    'stroke-dasharray':'5,4',
+    opacity:'0.5',
+    class:`lnk lrep`,
+    'data-s': s.id,
+    'data-t': n.id,
+    'data-tp':'rep',
+  });
+  gLinks.appendChild(el);
+  linkMap[s.id].push(el);
+  linkMap[n.id].push(el);
+});
+
+// Collaboration links (bezier curves, colored)
+COLLAB.forEach(([sid, tid, lbl]) => {
+  const sn = byId[sid], tn = byId[tid];
+  if (!sn || !tn) return;
+
+  // Pull control point toward center for a nice arc
+  const mx = (sn.x + tn.x) / 2;
+  const my = (sn.y + tn.y) / 2;
+  const distToCenter = Math.hypot(mx, my);
+  const pull = Math.min(65, Math.hypot(tn.x - sn.x, tn.y - sn.y) * 0.28);
+  const cx2 = distToCenter > 8 ? mx * (1 - pull / distToCenter) : mx;
+  const cy2 = distToCenter > 8 ? my * (1 - pull / distToCenter) : my;
+
+  const col = DEPT[sn.dept]?.color ?? '#60a5fa';
+  const el = mk('path', {
+    d: `M${sn.x},${sn.y} Q${cx2},${cy2},${tn.x},${tn.y}`,
+    fill:'none',
+    stroke: col,
+    'stroke-width':'1.8',
+    opacity:'0.25',
+    class:`lnk lcol`,
+    'data-s': sid,
+    'data-t': tid,
+    'data-tp':'col',
+    'data-lbl': lbl,
+  });
+  gLinks.appendChild(el);
+  linkMap[sid].push(el);
+  linkMap[tid].push(el);
+});
+
+// ════════════════════════════════════════════════
+// NODES
+// ════════════════════════════════════════════════
+NODES.forEach(n => {
+  const col = DEPT[n.dept]?.color ?? '#FF6B35';
+
+  const g = mk('g', {class:`nd nd-${n.id}`, 'data-id':n.id, style:'cursor:pointer'});
+
+  // Soft outer glow halo
+  g.appendChild(mk('circle', {cx:n.x, cy:n.y, r:n.r+10, fill:col, opacity:'0.09'}));
+  // Second glow ring for dept heads and CMO
+  if (n.tier <= 2) {
+    g.appendChild(mk('circle', {cx:n.x, cy:n.y, r:n.r+5, fill:'none', stroke:col, 'stroke-width':'0.6', opacity:'0.25'}));
+  }
+  // Main node circle
+  g.appendChild(mk('circle', {
+    cx:n.x, cy:n.y, r:n.r,
+    fill: col + '1a',
+    stroke: col,
+    'stroke-width': n.tier === 1 ? '2.5' : n.tier === 2 ? '2' : '1.5',
+    class:'node-c',
+  }));
+
+  // Label — radially outward from node
+  const la = n.angle ?? (Math.PI / 2);
+  const loff = n.r + 10;
+  const lx2 = n.x + Math.cos(la) * loff;
+  const ly2 = n.y + Math.sin(la) * loff;
+  const anchor = Math.cos(la) < -0.28 ? 'end' : Math.cos(la) > 0.28 ? 'start' : 'middle';
+  const baseline = 'middle';
+
+  const lt = mk('text', {
+    x: lx2, y: ly2,
+    fill: '#c8d6e8',
+    'font-size': n.tier === 1 ? '10.5' : n.tier === 2 ? '9' : '8',
+    'font-weight': n.tier <= 2 ? '700' : '500',
+    'text-anchor': anchor,
+    'dominant-baseline': baseline,
+    'pointer-events':'none',
+    class:'node-label',
+  });
+  lt.textContent = n.label;
+  g.appendChild(lt);
+
+  g.addEventListener('mouseenter', () => highlight(n.id));
+  g.addEventListener('mouseleave', reset);
+  g.addEventListener('click', e => { e.stopPropagation(); showPanel(n.id); });
+
+  gNodes.appendChild(g);
+});
+
+// ════════════════════════════════════════════════
+// INTERACTION
+// ════════════════════════════════════════════════
+function highlight(id) {
+  const connected = new Set([id]);
+  linkMap[id].forEach(l => {
+    connected.add(l.getAttribute('data-s'));
+    connected.add(l.getAttribute('data-t'));
+  });
+
+  document.querySelectorAll('.nd').forEach(el => {
+    el.style.opacity = connected.has(el.getAttribute('data-id')) ? '1' : '0.05';
+  });
+  document.querySelectorAll('.lnk').forEach(l => {
+    const s = l.getAttribute('data-s'), t = l.getAttribute('data-t');
+    if (s === id || t === id) {
+      l.style.opacity    = l.classList.contains('lcol') ? '0.92' : '0.75';
+      l.style.strokeWidth = l.classList.contains('lcol') ? '2.6'  : '1.8';
+    } else {
+      l.style.opacity = '0.02';
+    }
+  });
+  document.querySelectorAll('.sec, .sec-label').forEach(el => {
+    el.style.opacity = '0.02';
+  });
+}
+
+function reset() {
+  document.querySelectorAll('.nd, .lnk').forEach(el => {
+    el.style.opacity = '';
+    el.style.strokeWidth = '';
+  });
+  document.querySelectorAll('.sec, .sec-label').forEach(el => {
+    el.style.opacity = '';
+  });
+}
+
+function showPanel(id) {
+  const n   = byId[id];
+  const col = DEPT[n.dept]?.color ?? '#FF6B35';
+  const dlb = DEPT[n.dept]?.label ?? 'Leadership';
+  document.getElementById('p-title').textContent = n.full;
+  const b = document.getElementById('p-badge');
+  b.textContent = dlb; b.style.background = col + '22'; b.style.color = col;
+  document.getElementById('p-reports').textContent = n.up ? byId[n.up].full : 'CEO / Board';
+  document.getElementById('p-resp').innerHTML   = n.resp.map(r => `<div class="p-item">• ${r}</div>`).join('');
+  document.getElementById('p-collab').innerHTML = n.with.map(c => `<div class="p-item">→ ${c}</div>`).join('');
+  document.getElementById('panel').classList.add('on');
+}
+
+function closePanel() { document.getElementById('panel').classList.remove('on'); }
+SVG.addEventListener('click', closePanel);
+
+// ════════════════════════════════════════════════
+// ZOOM & PAN
+// ════════════════════════════════════════════════
+let vx=0, vy=0, sc=1, dragging=false, lx=0, ly=0;
+
+function applyT() {
+  G.setAttribute('transform', `translate(${vx},${vy}) scale(${sc})`);
+}
+
+SVG.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = SVG.getBoundingClientRect();
+  // Zoom toward mouse position
+  const mx = (e.clientX - rect.left) / rect.width  * VW - VW/2;
+  const my = (e.clientY - rect.top)  / rect.height * VH - VH/2;
+  const factor = e.deltaY < 0 ? 1.12 : 0.89;
+  const newSc  = Math.max(0.25, Math.min(5, sc * factor));
+  vx = mx - (mx - vx) * (newSc / sc);
+  vy = my - (my - vy) * (newSc / sc);
+  sc = newSc;
+  applyT();
+}, { passive: false });
+
+SVG.addEventListener('mousedown', e => {
+  dragging = true;
+  lx = e.clientX; ly = e.clientY;
+  e.preventDefault();
+});
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const rect = SVG.getBoundingClientRect();
+  const fx = VW / rect.width;
+  const fy = VH / rect.height;
+  vx += (e.clientX - lx) * fx;
+  vy += (e.clientY - ly) * fy;
+  lx = e.clientX; ly = e.clientY;
+  applyT();
+});
+window.addEventListener('mouseup', () => { dragging = false; });
+
+// Touch support
+let lastTouchDist = null;
+SVG.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) {
+    dragging = true;
+    lx = e.touches[0].clientX;
+    ly = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+});
+SVG.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && dragging) {
+    const rect = SVG.getBoundingClientRect();
+    vx += (e.touches[0].clientX - lx) * VW / rect.width;
+    vy += (e.touches[0].clientY - ly) * VH / rect.height;
+    lx = e.touches[0].clientX;
+    ly = e.touches[0].clientY;
+    applyT();
+  } else if (e.touches.length === 2) {
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    if (lastTouchDist) sc = Math.max(0.25, Math.min(5, sc * d / lastTouchDist));
+    lastTouchDist = d;
+    applyT();
+  }
+}, { passive: false });
+SVG.addEventListener('touchend', () => { dragging = false; lastTouchDist = null; });
+
+// ════════════════════════════════════════════════
+// DEPARTMENT LEGEND
+// ════════════════════════════════════════════════
+const dl = document.getElementById('dl');
+[...DEPT_ORDER, 'leadership'].forEach(dk => {
+  const d = DEPT[dk];
+  const item = document.createElement('div');
+  item.className = 'leg-item';
+  item.innerHTML = `<div class="l-dot" style="background:${d.color}"></div><span>${d.label}</span>`;
+  dl.appendChild(item);
+});
+</script>
+</body>
+</html>
